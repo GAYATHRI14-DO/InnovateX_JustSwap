@@ -13,14 +13,6 @@ service cloud.firestore {
      *    enforce ownership at the structural level. Supports public discovery via collection group rules.
      * 4. Interaction (/swapProposals/{swapProposalId}): Flat collection for peer-to-peer negotiations,
      *    using denormalized IDs for two-party authorization.
-     * 
-     * KEY SECURITY DECISIONS
-     * - Authorization Independence: We avoid 'get()' calls by using path parameters and denormalized fields
-     *   (like targetItemOwnerId in SwapProposals) to keep rules performant and cost-effective.
-     * - Prototyping Flexibility: Logic strictly enforces *who* can access data based on ownership and 
-     *   relational integrity, but does not restrict the *shape* or *types* of non-relational fields (e.g., bio, description).
-     * - Multi-Party Access: Swap proposals use a 'Shared Access' pattern where both the requester and the 
-     *   item owner are granted visibility and management rights.
      */
 
     // --- Helper Functions ---
@@ -89,11 +81,11 @@ service cloud.firestore {
     /**
      * @description Rules for managing swap proposals between two users.
      * @path /swapProposals/{swapProposalId}
-     * @allow (get/list) if user is participant OR if proposal is 'Accepted' (public activity feed).
      */
     match /swapProposals/{swapProposalId} {
-      allow get, list: if isParticipant(resource.data.proposerId, resource.data.targetItemOwnerId)
-                       || (resource != null && resource.data.status == 'Accepted');
+      // Allow read for participants or if the proposal is public/accepted
+      allow read: if isParticipant(resource.data.proposerId, resource.data.targetItemOwnerId)
+                  || resource.data.status == 'Accepted';
       
       allow create: if isSignedIn() 
                     && request.resource.data.proposerId == request.auth.uid;
