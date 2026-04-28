@@ -34,7 +34,7 @@ export default function AboutPage() {
                     src={missionImage.imageUrl} 
                     alt={missionImage.description} 
                     fill 
-                    className="object-cover"
+                    className="object-cover grayscale"
                     data-ai-hint={missionImage.imageHint}
                   />
                 )}

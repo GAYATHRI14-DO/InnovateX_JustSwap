@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -79,7 +78,7 @@ export default function Home() {
                     src={heroImage.imageUrl}
                     alt={heroImage.description}
                     fill
-                    className="object-cover"
+                    className="object-cover grayscale"
                     data-ai-hint={heroImage.imageHint}
                     priority
                   />
@@ -159,7 +158,7 @@ export default function Home() {
                   src={ctaImage.imageUrl} 
                   alt={ctaImage.description} 
                   fill 
-                  className="object-cover"
+                  className="object-cover grayscale"
                   data-ai-hint={ctaImage.imageHint}
                 />
               )}
