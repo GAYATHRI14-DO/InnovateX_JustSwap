@@ -37,9 +37,9 @@ export function Navbar() {
         {/* Center Section: Nav Links and Search Toggle */}
         <div className="flex-1 flex justify-center items-center gap-8 max-w-2xl">
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium shrink-0">
+            <Link href="/how-it-works" className="transition-colors hover:text-primary">How it Works</Link>
             <Link href="/" className="transition-colors hover:text-primary">Home</Link>
             <Link href="/about" className="transition-colors hover:text-primary">About</Link>
-            <Link href="/how-it-works" className="transition-colors hover:text-primary">How it Works</Link>
           </div>
 
           <form onSubmit={handleSearch} className="relative w-full max-w-[200px] hidden lg:block">
