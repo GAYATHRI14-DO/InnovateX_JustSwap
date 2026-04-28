@@ -40,11 +40,11 @@ export default function HowItWorksPage() {
               </p>
               <div className="relative max-w-3xl mx-auto aspect-[16/9] rounded-[2rem] overflow-hidden shadow-xl border bg-muted">
                 <Image 
-                  src="https://picsum.photos/seed/barter-exchange/1200/675" 
+                  src="https://picsum.photos/seed/barter-swap/1200/800" 
                   alt="Barter item exchange illustration" 
                   fill 
                   className="object-cover" 
-                  data-ai-hint="barter"
+                  data-ai-hint="barter illustration"
                 />
               </div>
             </div>
