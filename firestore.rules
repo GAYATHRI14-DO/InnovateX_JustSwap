@@ -1,3 +1,4 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -5,98 +6,56 @@ service cloud.firestore {
     /**
      * CORE SECURITY PHILOSOPHY
      * This ruleset implements a strict authorization model for SwapIt, a peer-to-peer item swapping platform.
-     * 
-     * DATA STRUCTURE & HIERARCHY
-     * 1. User Data (/users/{userId}): Private profile data restricted to the authenticated owner.
-     * 2. Categorization (/categories/{categoryId}): Global, read-only metadata for item classification.
-     * 3. Inventory (/users/{ownerId}/items/{itemId}): Hierarchically nested under the owner's path to 
-     *    enforce ownership at the structural level. Supports public discovery via collection group rules.
-     * 4. Interaction (/swapProposals/{swapProposalId}): Flat collection for peer-to-peer negotiations,
-     *    using denormalized IDs for two-party authorization.
      */
 
     // --- Helper Functions ---
 
-    /** Checks if the user is authenticated with any provider. */
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /** Validates if the authenticated user matches the provided ID. */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    /** Validates ownership and ensures the document exists for state-changing operations. */
-    function isExistingOwner(userId) {
-      return resource != null && isOwner(userId);
-    }
-
-    /** Checks if the current user is a participant in a swap proposal. */
     function isParticipant(proposerId, targetOwnerId) {
       return isSignedIn() && (request.auth.uid == proposerId || request.auth.uid == targetOwnerId);
     }
 
     // --- Collection Rules ---
 
-    /**
-     * @description Rules for managing individual user profiles.
-     * @path /users/{userId}
-     */
     match /users/{userId} {
       allow get, list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
     }
 
-    /**
-     * @description Rules for accessing global item categories.
-     * @path /categories/{categoryId}
-     */
     match /categories/{categoryId} {
       allow get, list: if true;
-      allow create, update, delete: if false;
     }
 
-    /**
-     * @description Rules for items listed by users.
-     * @path /users/{ownerId}/items/{itemId}
-     */
     match /users/{ownerId}/items/{itemId} {
-      allow get: if isOwner(ownerId) || resource.data.status == 'Available';
-      allow list: if isOwner(ownerId) || resource.data.status == 'Available';
-      allow create: if isOwner(ownerId) && request.resource.data.ownerId == ownerId;
-      allow update: if isExistingOwner(ownerId) && request.resource.data.ownerId == resource.data.ownerId;
-      allow delete: if isExistingOwner(ownerId);
+      allow get, list: if resource.data.status == 'Available' || isOwner(ownerId);
+      allow create: if isOwner(ownerId);
+      allow update: if isOwner(ownerId);
+      allow delete: if isOwner(ownerId);
     }
 
-    /**
-     * @description Support for global item browsing across all users' subcollections.
-     */
     match /{path=**}/items/{itemId} {
       allow read: if resource.data.status == 'Available';
     }
 
-    /**
-     * @description Rules for managing swap proposals between two users.
-     * @path /swapProposals/{swapProposalId}
-     */
     match /swapProposals/{swapProposalId} {
-      // Allow read for participants or if the proposal is public/accepted
-      allow read: if isParticipant(resource.data.proposerId, resource.data.targetItemOwnerId)
-                  || resource.data.status == 'Accepted';
+      // Allow list and get for participants or if the swap is accepted (for public activity feed)
+      allow read: if resource.data.status == 'Accepted' 
+                  || (isSignedIn() && (request.auth.uid == resource.data.proposerId || request.auth.uid == resource.data.targetItemOwnerId));
       
-      allow create: if isSignedIn() 
-                    && request.resource.data.proposerId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.proposerId == request.auth.uid;
       
-      allow update: if resource != null 
-                    && isParticipant(resource.data.proposerId, resource.data.targetItemOwnerId)
-                    && request.resource.data.proposerId == resource.data.proposerId
-                    && request.resource.data.targetItemOwnerId == resource.data.targetItemOwnerId;
+      allow update: if isSignedIn() && (request.auth.uid == resource.data.proposerId || request.auth.uid == resource.data.targetItemOwnerId);
       
-      allow delete: if resource != null 
-                    && isParticipant(resource.data.proposerId, resource.data.targetItemOwnerId);
+      allow delete: if isSignedIn() && (request.auth.uid == resource.data.proposerId || request.auth.uid == resource.data.targetItemOwnerId);
     }
   }
 }

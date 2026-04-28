@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, PlusCircle, User, Bell, RefreshCw, UserPlus } from 'lucide-react';
+import { Search, PlusCircle, User, Bell, RefreshCw, UserPlus, Loader2 } from 'lucide-react';
 import { SwapLogo } from './SwapLogo';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -165,7 +165,11 @@ export function Navbar() {
             </Popover>
           )}
 
-          {user ? (
+          {isUserLoading ? (
+            <Button size="icon" variant="ghost" disabled className="rounded-full">
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            </Button>
+          ) : user ? (
             <Link href="/dashboard">
               <Button size="icon" variant="ghost" className="text-primary hover:bg-primary/5 rounded-full">
                 <User className="h-5 w-5" />
@@ -177,7 +181,6 @@ export function Navbar() {
               variant="default" 
               className="rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90"
               onClick={handleSignUp}
-              disabled={isUserLoading}
             >
               <UserPlus className="h-4 w-4 mr-2" />
               Sign Up
