@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -44,7 +43,7 @@ export default function Home() {
                 Bartering Reimagined
               </Badge>
               <h1 className="text-5xl lg:text-7xl font-headline font-bold leading-[1.1] text-foreground">
-                Get what you <span className="italic underline decoration-accent text-muted-foreground/80">NEED</span> without paying money.
+                Get what you <span className="italic underline decoration-accent text-primary/80">NEED</span> without paying money.
               </h1>
               <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
                 Exchange items with your neighbors. JustSwap helps you find new homes for your belongings while getting the things you want, sustainably.
@@ -56,7 +55,7 @@ export default function Home() {
                   </Button>
                 </Link>
                 <Link href="/list-item">
-                  <Button size="lg" variant="outline" className="h-14 px-8 text-lg font-bold rounded-2xl border-2 hover:bg-primary/5">
+                  <Button size="lg" variant="outline" className="h-14 px-8 text-lg font-bold rounded-2xl border-2 border-primary/20 hover:bg-primary/5">
                     Post an Item
                   </Button>
                 </Link>
@@ -78,7 +77,7 @@ export default function Home() {
                   src={heroImage.imageUrl}
                   alt={heroImage.description}
                   fill
-                  className="object-cover grayscale"
+                  className="object-cover"
                   data-ai-hint={heroImage.imageHint}
                   priority
                 />
@@ -146,7 +145,7 @@ export default function Home() {
                 Join thousands of people who are saving money and living more sustainably by bartering. It takes less than 2 minutes to list an item.
               </p>
               <Link href="/list-item" className="inline-block">
-                <Button size="lg" className="bg-white text-black hover:bg-white/90 h-14 px-10 rounded-2xl font-bold text-lg">
+                <Button size="lg" className="bg-white text-primary hover:bg-white/90 h-14 px-10 rounded-2xl font-bold text-lg">
                   Get Started Now
                 </Button>
               </Link>
@@ -157,7 +156,7 @@ export default function Home() {
                   src={ctaImage.imageUrl} 
                   alt={ctaImage.description} 
                   fill 
-                  className="object-cover grayscale"
+                  className="object-cover"
                   data-ai-hint={ctaImage.imageHint}
                 />
               )}

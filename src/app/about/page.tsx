@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navbar } from '@/components/layout/Navbar';
@@ -18,7 +17,7 @@ export default function AboutPage() {
         {/* Hero Section */}
         <section className="py-20 bg-white border-b">
           <div className="container mx-auto px-4 text-center space-y-6">
-            <h1 className="text-5xl lg:text-7xl font-script font-bold">Our Story</h1>
+            <h1 className="text-5xl lg:text-7xl font-script font-bold text-primary">Our Story</h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               JustSwap began with a simple idea: that our communities are full of untapped value, and that bartering can be a powerful tool for sustainability and connection.
             </p>
@@ -35,7 +34,7 @@ export default function AboutPage() {
                     src={missionImage.imageUrl} 
                     alt={missionImage.description} 
                     fill 
-                    className="object-cover grayscale"
+                    className="object-cover"
                     data-ai-hint={missionImage.imageHint}
                   />
                 )}
@@ -47,7 +46,7 @@ export default function AboutPage() {
                 </p>
                 <div className="space-y-6">
                   <div className="flex gap-4">
-                    <div className="h-12 w-12 rounded-2xl bg-black text-white flex items-center justify-center shrink-0">
+                    <div className="h-12 w-12 rounded-2xl bg-primary text-white flex items-center justify-center shrink-0">
                       <Leaf className="h-6 w-6" />
                     </div>
                     <div>
@@ -56,7 +55,7 @@ export default function AboutPage() {
                     </div>
                   </div>
                   <div className="flex gap-4">
-                    <div className="h-12 w-12 rounded-2xl bg-black text-white flex items-center justify-center shrink-0">
+                    <div className="h-12 w-12 rounded-2xl bg-primary text-white flex items-center justify-center shrink-0">
                       <Users className="h-6 w-6" />
                     </div>
                     <div>
@@ -71,27 +70,27 @@ export default function AboutPage() {
         </section>
 
         {/* Values Grid */}
-        <section className="py-24 bg-black text-white">
+        <section className="py-24 bg-primary text-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16 space-y-4">
               <h2 className="text-4xl font-headline font-bold">What We Stand For</h2>
-              <p className="text-white/60 max-w-xl mx-auto">Our core principles guide every decision we make and every feature we build.</p>
+              <p className="text-white/80 max-w-xl mx-auto">Our core principles guide every decision we make and every feature we build.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 space-y-4">
+              <div className="p-8 rounded-[2rem] bg-white/10 border border-white/20 space-y-4">
                 <Heart className="h-8 w-8" />
                 <h3 className="text-2xl font-bold">Empathy</h3>
-                <p className="text-white/60">We build tools that foster understanding and kindness in every transaction.</p>
+                <p className="text-white/80">We build tools that foster understanding and kindness in every transaction.</p>
               </div>
-              <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 space-y-4">
+              <div className="p-8 rounded-[2rem] bg-white/10 border border-white/20 space-y-4">
                 <ShieldCheck className="h-8 w-8" />
                 <h3 className="text-2xl font-bold">Safety</h3>
-                <p className="text-white/60">Your security is our top priority, with verified profiles and safe exchange guidelines.</p>
+                <p className="text-white/80">Your security is our top priority, with verified profiles and safe exchange guidelines.</p>
               </div>
-              <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 space-y-4">
+              <div className="p-8 rounded-[2rem] bg-white/10 border border-white/20 space-y-4">
                 <Leaf className="h-8 w-8" />
                 <h3 className="text-2xl font-bold">Eco-Conscious</h3>
-                <p className="text-white/60">Every swap is a small victory for the planet, reducing carbon footprints one item at a time.</p>
+                <p className="text-white/80">Every swap is a small victory for the planet, reducing carbon footprints one item at a time.</p>
               </div>
             </div>
           </div>
@@ -115,7 +114,7 @@ export default function AboutPage() {
         </section>
 
         {/* Final CTA */}
-        <section className="py-24 bg-muted/30">
+        <section className="py-24 bg-primary/5">
           <div className="container mx-auto px-4 text-center space-y-8">
             <h2 className="text-4xl font-headline font-bold">Join the Movement</h2>
             <p className="text-xl text-muted-foreground max-w-xl mx-auto">
@@ -123,12 +122,12 @@ export default function AboutPage() {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/browse">
-                <Button size="lg" className="h-14 px-10 rounded-2xl font-bold text-lg bg-black hover:bg-black/90">
+                <Button size="lg" className="h-14 px-10 rounded-2xl font-bold text-lg bg-primary hover:bg-primary/90">
                   Browse Items
                 </Button>
               </Link>
               <Link href="/list-item">
-                <Button size="lg" variant="outline" className="h-14 px-10 rounded-2xl font-bold text-lg">
+                <Button size="lg" variant="outline" className="h-14 px-10 rounded-2xl font-bold text-lg border-primary/20 hover:bg-primary/5">
                   List an Item
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
