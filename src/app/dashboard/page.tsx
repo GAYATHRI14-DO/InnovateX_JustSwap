@@ -18,7 +18,6 @@ import {
   Loader2,
   Inbox
 } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useUser, useFirestore, useDoc, useMemoFirebase, useCollection, updateDocumentNonBlocking } from '@/firebase';
 import { doc, collection, query, where } from 'firebase/firestore';
@@ -126,9 +125,6 @@ export default function DashboardPage() {
                 <div>
                   <h2 className="text-2xl font-headline font-bold">{displayName}</h2>
                   <p className="text-sm text-muted-foreground">{userEmail}</p>
-                </div>
-                <div className="flex justify-center gap-2">
-                  <Badge variant="secondary" className="bg-primary/10 text-primary font-bold">Verified Member</Badge>
                 </div>
                 <div className="pt-4 space-y-2">
                   <Link href="/profile/edit" className="block w-full">
