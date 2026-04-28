@@ -15,10 +15,8 @@ export default function Signup() {
       return;
     }
 
-    const userData = { email };
-    localStorage.setItem("user", JSON.stringify(userData));
-
-    router.push("/"); // go back home
+    localStorage.setItem("user", JSON.stringify({ email }));
+    router.push("/");
   };
 
   return (
