@@ -159,17 +159,6 @@ export default function EditProfilePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <Input 
-                    id="username" 
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="h-12 rounded-xl"
-                    placeholder="Choose a username"
-                  />
-                </div>
-
-                <div className="space-y-2">
                   <Label htmlFor="bio">Bio</Label>
                   <Textarea 
                     id="bio" 
