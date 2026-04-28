@@ -62,10 +62,6 @@ export function Navbar() {
 
         {/* Right Section: Actions */}
         <div className="flex items-center gap-4 shrink-0">
-          <Link href="/how-it-works" className="hidden md:block transition-colors hover:text-primary text-sm font-medium">
-            How it Works
-          </Link>
-          
           <Link href="/list-item" className="hidden sm:block">
             <Button variant="outline" className="gap-2 border-primary text-primary hover:bg-primary/5 rounded-xl">
               <PlusCircle className="h-4 w-4" />
@@ -78,6 +74,10 @@ export function Navbar() {
               <User className="h-5 w-5" />
               <span className="sr-only">Account</span>
             </Button>
+          </Link>
+
+          <Link href="/how-it-works" className="hidden md:block transition-colors hover:text-primary text-sm font-medium">
+            How it Works
           </Link>
         </div>
 
