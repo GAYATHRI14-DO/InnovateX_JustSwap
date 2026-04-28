@@ -45,10 +45,12 @@ export default function DashboardPage() {
                   <Badge variant="secondary" className="bg-primary/10 text-primary font-bold">Verified Member</Badge>
                 </div>
                 <div className="pt-4 space-y-2">
-                  <Button variant="outline" className="w-full justify-start gap-2 rounded-xl">
-                    <Settings className="h-4 w-4" />
-                    Edit Profile
-                  </Button>
+                  <Link href="/profile/edit" className="block w-full">
+                    <Button variant="outline" className="w-full justify-start gap-2 rounded-xl">
+                      <Settings className="h-4 w-4" />
+                      Edit Profile
+                    </Button>
+                  </Link>
                   <Button variant="outline" className="w-full justify-start gap-2 rounded-xl text-destructive hover:bg-destructive/5 hover:text-destructive">
                     <LogOut className="h-4 w-4" />
                     Sign Out
