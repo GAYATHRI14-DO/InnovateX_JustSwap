@@ -73,7 +73,7 @@ export default function Home() {
               </div>
             </div>
             <div className="relative flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-sm aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-1000">
+              <div className="relative w-full max-w-lg aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-1000">
                 {heroImage && (
                   <Image 
                     src={heroImage.imageUrl}
