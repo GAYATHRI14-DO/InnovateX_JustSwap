@@ -6,20 +6,7 @@ import { ItemCard } from '@/components/items/ItemCard';
 import { Button } from '@/components/ui/button';
 import { ITEMS } from '@/lib/mock-data';
 import { ArrowRight, RefreshCw, ShieldCheck, Heart } from 'lucide-react';
-
-function SwapLogo({ className }: { className?: string }) {
-  return (
-    <svg 
-      viewBox="0 0 24 24" 
-      fill="currentColor" 
-      className={className} 
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M4.5 14c0-4.5 5.5-7.5 9.5-4 0 0-3.5 11-9.5 4Z" />
-      <path d="M19.5 10c0 4.5-5.5 7.5-9.5 4 0 0 3.5-11 9.5-4Z" />
-    </svg>
-  );
-}
+import { SwapLogo } from '@/components/layout/SwapLogo';
 
 export default function Home() {
   const featuredItems = ITEMS.slice(0, 4);
@@ -154,10 +141,9 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="space-y-4">
               <Link href="/" className="flex items-center gap-2">
-                <div className="bg-primary text-white p-1.5 rounded-xl">
+                <div className="bg-primary text-white p-1.5 rounded-xl shadow-sm">
                   <SwapLogo className="h-6 w-6" />
                 </div>
-                <span className="text-xl font-headline font-bold tracking-tight text-foreground">Swap</span>
               </Link>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 The world's friendliest platform for bartering and item exchange. Built for community, sustainability, and saving.
