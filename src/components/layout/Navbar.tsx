@@ -121,7 +121,7 @@ export function Navbar() {
             <div className="flex items-center gap-2">
               {user ? (
                 <Link href="/dashboard">
-                  <Button variant="ghost" size="icon" title="Account" className="rounded-xl border border-transparent hover:border-black/10">
+                  <Button variant="ghost" size="icon" title="Account" className="rounded-xl border border-transparent hover:border-black/10 grayscale">
                     <User className="h-5 w-5" />
                   </Button>
                 </Link>
