@@ -117,7 +117,7 @@ export function Navbar() {
                     {notifications.map((notif) => (
                       <Link 
                         key={notif.id} 
-                        href="/dashboard" 
+                        href={`/proposals/${notif.id}`} 
                         className="block p-4 hover:bg-primary/5 transition-colors"
                       >
                         <div className="flex gap-3">
