@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -33,7 +32,6 @@ export default function EditProfilePage() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [bio, setBio] = useState('');
-  const [username, setUsername] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -41,9 +39,7 @@ export default function EditProfilePage() {
       setFirstName(profile.firstName || '');
       setLastName(profile.lastName || '');
       setBio(profile.bio || '');
-      setUsername(profile.username || '');
     } else if (user && !isProfileLoading) {
-        // Fallback if profile doesn't exist yet but user is logged in
         setFirstName(user.displayName?.split(' ')[0] || '');
         setLastName(user.displayName?.split(' ').slice(1).join(' ') || '');
     }
@@ -60,7 +56,7 @@ export default function EditProfilePage() {
       firstName,
       lastName,
       bio,
-      username: username || user.email?.split('@')[0],
+      username: profile?.username || user.email?.split('@')[0],
       email: user.email,
       lastLoginDate: serverTimestamp(),
       registrationDate: profile?.registrationDate || serverTimestamp(),
@@ -73,7 +69,6 @@ export default function EditProfilePage() {
       description: "Your changes have been saved successfully.",
     });
     
-    // Optimistic redirect
     setTimeout(() => {
         router.push('/dashboard');
     }, 500);
@@ -146,14 +141,13 @@ export default function EditProfilePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label htmlFor="lastName">Last Name (optional)</Label>
                     <Input 
                       id="lastName" 
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       className="h-12 rounded-xl"
                       placeholder="Last name"
-                      required
                     />
                   </div>
                 </div>
