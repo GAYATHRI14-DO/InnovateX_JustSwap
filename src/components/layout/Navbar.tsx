@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -13,14 +12,11 @@ import { collection, query, where } from 'firebase/firestore';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
-import { useAuth } from '@/firebase';
 
 export function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
   const { user, isUserLoading } = useUser();
-  const auth = useAuth();
   const firestore = useFirestore();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -32,11 +28,7 @@ export function Navbar() {
     }
   };
 
-  const handleSignUp = () => {
-    initiateAnonymousSignIn(auth);
-  };
-
-  // Real-time listener for incoming swap proposals (Notifications)
+  // Notifications query
   const incomingProposalsQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return query(
@@ -49,23 +41,23 @@ export function Navbar() {
   const { data: notifications, isLoading } = useCollection(incomingProposalsQuery);
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 py-3">
+    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur px-4 py-3">
       <div className="container mx-auto flex items-center justify-between gap-4">
         
-        {/* Left Section: Logo */}
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group shrink-0">
-          <div className="bg-primary text-white p-2 rounded-xl group-hover:bg-primary/90 transition-colors shadow-sm">
+          <div className="bg-primary text-white p-2 rounded-xl">
             <SwapLogo className="h-6 w-6" />
           </div>
-          <span className="text-2xl font-headline font-bold tracking-tight text-foreground hidden sm:block">JustSwap</span>
+          <span className="text-2xl font-bold hidden sm:block">JustSwap</span>
         </Link>
 
-        {/* Center Section: Nav Links and Search Toggle */}
+        {/* Center */}
         <div className="flex-1 flex justify-center items-center gap-8 max-w-2xl">
-          <div className="hidden md:flex items-center space-x-8 text-sm font-medium shrink-0">
-            <Link href="/" className="transition-colors hover:text-primary">Home</Link>
-            <Link href="/about" className="transition-colors hover:text-primary">About</Link>
-            <Link href="/how-it-works" className="transition-colors hover:text-primary">Guide</Link>
+          <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
+            <Link href="/">Home</Link>
+            <Link href="/about">About</Link>
+            <Link href="/how-it-works">Guide</Link>
           </div>
 
           <form onSubmit={handleSearch} className="relative w-full max-w-[200px] hidden lg:block">
@@ -73,118 +65,86 @@ export function Navbar() {
             <Input 
               type="search"
               placeholder="Search..." 
-              className="pl-9 h-9 rounded-xl bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-primary text-xs"
+              className="pl-9 h-9 rounded-xl"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </form>
-          
+
           <Link href="/browse" className="lg:hidden">
-            <Button size="icon" variant="ghost" className="text-primary hover:bg-primary/5 rounded-full">
+            <Button size="icon" variant="ghost">
               <Search className="h-5 w-5" />
-              <span className="sr-only">Search</span>
             </Button>
           </Link>
         </div>
 
-        {/* Right Section: Actions */}
-        <div className="flex items-center gap-4 shrink-0">
+        {/* Right */}
+        <div className="flex items-center gap-4">
+
           <Link href="/list-item" className="hidden sm:block">
-            <Button variant="outline" className="gap-2 border-primary text-primary hover:bg-primary/5 rounded-xl">
+            <Button variant="outline" className="gap-2">
               <PlusCircle className="h-4 w-4" />
               List Item
             </Button>
           </Link>
 
-          {/* Notifications Dropdown */}
+          {/* Notifications */}
           {user && (
             <Popover>
               <PopoverTrigger asChild>
-                <Button size="icon" variant="ghost" className="text-primary hover:bg-primary/5 rounded-full relative">
+                <Button size="icon" variant="ghost" className="relative">
                   <Bell className="h-5 w-5" />
                   {notifications && notifications.length > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500 border-2 border-white text-[10px] text-white rounded-full">
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500 text-[10px] text-white">
                       {notifications.length}
                     </Badge>
                   )}
-                  <span className="sr-only">Notifications</span>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-80 p-0 rounded-2xl overflow-hidden shadow-2xl border-primary/10" align="end">
+
+              <PopoverContent className="w-80 p-0">
                 <div className="p-4 bg-primary text-white">
-                  <h4 className="font-headline font-bold">Notifications</h4>
-                  <p className="text-xs text-white/70">
-                    {notifications?.length || 0} pending swap proposals
+                  <h4>Notifications</h4>
+                  <p className="text-xs">
+                    {notifications?.length || 0} pending
                   </p>
                 </div>
+
                 <ScrollArea className="h-80">
                   {isLoading ? (
-                    <div className="p-8 text-center text-sm text-muted-foreground">Checking for updates...</div>
-                  ) : notifications && notifications.length > 0 ? (
-                    <div className="divide-y">
-                      {notifications.map((notif) => (
-                        <Link 
-                          key={notif.id} 
-                          href={`/proposals/${notif.id}`} 
-                          className="block p-4 hover:bg-primary/5 transition-colors"
-                        >
-                          <div className="flex gap-3">
-                            <div className="h-10 w-10 rounded-full bg-accent flex items-center justify-center shrink-0">
-                              <RefreshCw className="h-5 w-5 text-accent-foreground" />
-                            </div>
-                            <div className="space-y-1">
-                              <p className="text-sm font-medium leading-tight">
-                                New Swap Proposal!
-                              </p>
-                              <p className="text-xs text-muted-foreground line-clamp-2">
-                                {notif.message || "Someone wants to trade with you."}
-                              </p>
-                              <p className="text-[10px] text-primary/60 font-medium">
-                                {notif.proposalDate ? new Date(notif.proposalDate).toLocaleDateString() : 'Pending'}
-                              </p>
-                            </div>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
+                    <div className="p-6 text-center">Loading...</div>
+                  ) : notifications?.length ? (
+                    notifications.map((notif) => (
+                      <Link key={notif.id} href={`/proposals/${notif.id}`} className="block p-4">
+                        <p className="text-sm font-medium">New Swap Proposal</p>
+                        <p className="text-xs">{notif.message}</p>
+                      </Link>
+                    ))
                   ) : (
-                    <div className="p-12 text-center space-y-2">
-                      <Bell className="h-8 w-8 text-muted-foreground mx-auto opacity-20" />
-                      <p className="text-sm text-muted-foreground">No new notifications</p>
-                    </div>
+                    <div className="p-6 text-center">No notifications</div>
                   )}
                 </ScrollArea>
-                <div className="p-2 border-t bg-muted/30 text-center">
-                  <Link href="/dashboard">
-                    <Button variant="ghost" size="sm" className="w-full text-xs font-bold text-primary">
-                      Go to Dashboard
-                    </Button>
-                  </Link>
-                </div>
               </PopoverContent>
             </Popover>
           )}
 
+          {/* USER SECTION */}
           {isUserLoading ? (
-            <Button size="icon" variant="ghost" disabled className="rounded-full">
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-            </Button>
+            <Loader2 className="h-5 w-5 animate-spin" />
           ) : user ? (
             <Link href="/dashboard">
-              <Button variant="ghost" className="text-primary hover:bg-primary/5 rounded-xl font-bold gap-2">
+              <Button variant="ghost" className="gap-2">
                 <User className="h-4 w-4" />
                 Account
               </Button>
             </Link>
           ) : (
-            <Button 
-              variant="default" 
-              className="rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90"
-              onClick={handleSignUp}
-            >
-              <UserPlus className="h-4 w-4 mr-2" />
-              Sign Up
-            </Button>
+            <Link href="/signup">
+              <Button className="gap-2">
+                <UserPlus className="h-4 w-4" />
+                Sign Up
+              </Button>
+            </Link>
           )}
         </div>
 
