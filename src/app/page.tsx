@@ -38,7 +38,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-background pt-16 pb-20 lg:pt-24 lg:pb-32">
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 items-center">
             <div className="space-y-8 animate-in fade-in slide-in-from-left duration-700">
               <Badge variant="outline" className="px-4 py-1 text-primary border-primary/20 bg-primary/5 rounded-full font-semibold">
                 Bartering Reimagined
@@ -72,33 +72,35 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="relative aspect-square lg:aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-1000">
-              {heroImage && (
-                <Image 
-                  src={heroImage.imageUrl}
-                  alt={heroImage.description}
-                  fill
-                  className="object-cover"
-                  data-ai-hint={heroImage.imageHint}
-                  priority
-                />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-              
-              {/* Recent Swap Activity Overlay */}
-              {!isSwapsLoading && recentSwaps && recentSwaps.length > 0 && (
-                <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-white animate-in slide-in-from-bottom duration-1000">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-primary text-white p-2 rounded-xl">
-                      <RefreshCw className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Recent Swap Activity</p>
-                      <p className="text-sm font-medium">Someone just swapped a vintage item!</p>
+            <div className="relative flex justify-center lg:justify-end">
+              <div className="relative w-full max-w-md aspect-square rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-1000">
+                {heroImage && (
+                  <Image 
+                    src={heroImage.imageUrl}
+                    alt={heroImage.description}
+                    fill
+                    className="object-cover"
+                    data-ai-hint={heroImage.imageHint}
+                    priority
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                
+                {/* Recent Swap Activity Overlay */}
+                {!isSwapsLoading && recentSwaps && recentSwaps.length > 0 && (
+                  <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-white animate-in slide-in-from-bottom duration-1000">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary text-white p-2 rounded-xl">
+                        <RefreshCw className="h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Recent Swap Activity</p>
+                        <p className="text-sm font-medium">Someone just swapped a vintage item!</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>
