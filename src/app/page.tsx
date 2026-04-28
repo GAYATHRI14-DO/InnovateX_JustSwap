@@ -65,7 +65,7 @@ export default function Home() {
               <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/90 backdrop-blur rounded-2xl flex items-center justify-between">
                 <div>
                   <p className="text-sm font-bold text-primary">Recent Swap</p>
-                  <p className="text-lg font-headline font-bold">Vintage Camera for Road Bike</p>
+                  <p className="text-lg font-headline font-bold">Vintage Camera For Portable Bluetooth Speaker</p>
                 </div>
                 <SwapLogo className="h-8 w-8 text-foreground" />
               </div>
