@@ -5,6 +5,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { Package, Search, Handshake, ShieldCheck, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function HowItWorksPage() {
   const steps = [
@@ -33,9 +34,20 @@ export default function HowItWorksPage() {
         <section className="py-20 bg-white border-b">
           <div className="container mx-auto px-4 text-center space-y-6">
             <h1 className="text-5xl lg:text-7xl font-script font-bold">How it Works</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              JustSwap is a community-driven platform designed to make bartering easy, safe, and sustainable.
-            </p>
+            <div className="space-y-8">
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                JustSwap is a community-driven platform designed to make bartering easy, safe, and sustainable.
+              </p>
+              <div className="relative max-w-3xl mx-auto aspect-[16/9] rounded-[2rem] overflow-hidden shadow-xl border bg-muted">
+                <Image 
+                  src="https://picsum.photos/seed/swapping-cartoon/1200/675" 
+                  alt="Swapping items illustration" 
+                  fill 
+                  className="object-cover" 
+                  data-ai-hint="item exchange"
+                />
+              </div>
+            </div>
           </div>
         </section>
 
