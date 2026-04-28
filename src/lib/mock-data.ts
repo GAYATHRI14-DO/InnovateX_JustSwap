@@ -5,7 +5,7 @@ export const ITEMS = [
     description: 'Beautifully preserved vintage film camera, ideal for collectors and photography lovers.',
     category: 'Electronics',
     condition: 'Good',
-    location: 'Brooklyn, NY',
+    location: 'Gayathri, Surathkal',
     imageUrl: 'https://i.etsystatic.com/5356285/r/il/7ee563/3064919200/il_570xN.3064919200_ja9j.jpg',
     ownerId: 'user1',
     ownerName: 'Alice Green',
@@ -48,3 +48,28 @@ export const ITEMS = [
     createdAt: '2024-01-04'
   }
 ];
+
+export const MY_ITEMS = [
+  {
+    id: 'm1',
+    title: 'Mountain Bike',
+    description: 'Hardly used mountain bike, great for trails.',
+    category: 'Sporting Goods',
+    condition: 'Like New',
+    imageUrl: 'https://picsum.photos/seed/bike/600/400'
+  },
+  {
+    id: 'm2',
+    title: 'Succulent Collection',
+    description: 'A variety of small succulents in clay pots.',
+    category: 'Home & Garden',
+    condition: 'New',
+    imageUrl: 'https://picsum.photos/seed/plants/600/400'
+  }
+];
+
+export const CURRENT_USER = {
+  id: 'user_current',
+  name: 'John Doe',
+  email: 'john@example.com'
+};
