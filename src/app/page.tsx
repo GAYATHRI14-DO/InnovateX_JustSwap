@@ -1,15 +1,32 @@
+
+"use client";
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
 import { ItemCard } from '@/components/items/ItemCard';
 import { Button } from '@/components/ui/button';
 import { ITEMS } from '@/lib/mock-data';
-import { ArrowRight, RefreshCw, ShieldCheck, Heart } from 'lucide-react';
+import { ArrowRight, RefreshCw, ShieldCheck, Heart, Loader2 } from 'lucide-react';
 import { SwapLogo } from '@/components/layout/SwapLogo';
 import { Badge } from '@/components/ui/badge';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query, where, limit } from 'firebase/firestore';
 
 export default function Home() {
+  const firestore = useFirestore();
   const featuredItems = ITEMS.slice(0, 4);
+
+  const recentSwapsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(
+      collection(firestore, 'swapProposals'),
+      where('status', '==', 'Accepted'),
+      limit(1)
+    );
+  }, [firestore]);
+
+  const { data: recentSwaps, isLoading: isSwapsLoading } = useCollection(recentSwapsQuery);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -64,8 +81,16 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/90 backdrop-blur rounded-2xl flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-bold text-primary">Recent Swap</p>
-                  <p className="text-lg font-headline font-bold">Vintage Camera For Portable Bluetooth Speaker</p>
+                  <p className="text-sm font-bold text-primary">Recent Swap Activity</p>
+                  <p className="text-lg font-headline font-bold">
+                    {isSwapsLoading ? (
+                      <span className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Checking swaps...</span>
+                    ) : recentSwaps && recentSwaps.length > 0 ? (
+                      `Recent Swap: ${recentSwaps[0].message || "Successful Exchange"}`
+                    ) : (
+                      "No swaps yet"
+                    )}
+                  </p>
                 </div>
                 <SwapLogo className="h-8 w-8 text-foreground" />
               </div>
@@ -151,7 +176,6 @@ export default function Home() {
               <h4 className="font-bold">Platform</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/browse" className="hover:text-primary">Browse All Items</Link></li>
-                <li><Link href="/categories" className="hover:text-primary">Categories</Link></li>
                 <li><Link href="/how-it-works" className="hover:text-primary">How It Works</Link></li>
               </ul>
             </div>

@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { MY_ITEMS, ITEMS } from '@/lib/mock-data';
 import { ItemCard } from '@/components/items/ItemCard';
 import { 
   Package, 
@@ -16,19 +15,22 @@ import {
   LogOut, 
   ChevronRight, 
   Clock, 
-  Loader2
+  Loader2,
+  Inbox
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { useUser, useFirestore, useDoc, useMemoFirebase, useCollection, updateDocumentNonBlocking } from '@/firebase';
+import { doc, collection, query, where } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { useAuth } from '@/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
   const firestore = useFirestore();
+  const { toast } = useToast();
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -37,8 +39,48 @@ export default function DashboardPage() {
 
   const { data: profile, isLoading: isProfileLoading } = useDoc(userDocRef);
 
+  // My Listings
+  const myListingsQuery = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return collection(firestore, 'users', user.uid, 'items');
+  }, [firestore, user]);
+  const { data: myListings, isLoading: isListingsLoading } = useCollection(myListingsQuery);
+
+  // Incoming Proposals
+  const incomingProposalsQuery = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return query(
+      collection(firestore, 'swapProposals'),
+      where('targetItemOwnerId', '==', user.uid)
+    );
+  }, [firestore, user]);
+  const { data: incomingProposals, isLoading: isIncomingLoading } = useCollection(incomingProposalsQuery);
+
+  // Sent Proposals
+  const sentProposalsQuery = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return query(
+      collection(firestore, 'swapProposals'),
+      where('proposerId', '==', user.uid)
+    );
+  }, [firestore, user]);
+  const { data: sentProposals, isLoading: isSentLoading } = useCollection(sentProposalsQuery);
+
   const handleSignOut = () => {
     signOut(auth);
+  };
+
+  const handleUpdateStatus = (proposalId: string, newStatus: 'Accepted' | 'Declined') => {
+    if (!firestore) return;
+    const ref = doc(firestore, 'swapProposals', proposalId);
+    updateDocumentNonBlocking(ref, { 
+      status: newStatus,
+      responseDate: new Date().toISOString()
+    });
+    toast({
+      title: `Proposal ${newStatus}`,
+      description: `You have ${newStatus.toLowerCase()} the swap proposal.`,
+    });
   };
 
   if (isUserLoading || isProfileLoading) {
@@ -49,9 +91,23 @@ export default function DashboardPage() {
     );
   }
 
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-muted/30 text-center space-y-4">
+        <h2 className="text-2xl font-headline font-bold">Please Sign In</h2>
+        <p className="text-muted-foreground">You need to be logged in to access your dashboard.</p>
+        <Link href="/">
+          <Button>Back to Home</Button>
+        </Link>
+      </div>
+    );
+  }
+
   const displayName = profile?.firstName ? `${profile.firstName} ${profile.lastName}` : (user?.displayName || 'User');
   const userEmail = user?.email || 'No email';
   const userAvatar = user?.photoURL || `https://picsum.photos/seed/${user?.uid}/200/200`;
+
+  const pendingIncoming = incomingProposals?.filter(p => p.status === 'Pending') || [];
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -100,15 +156,11 @@ export default function DashboardPage() {
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Successful Swaps</span>
-                  <span className="font-bold">12</span>
+                  <span className="font-bold">{incomingProposals?.filter(p => p.status === 'Accepted').length || 0}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Active Listings</span>
-                  <span className="font-bold">{MY_ITEMS.length}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Reputation Score</span>
-                  <span className="font-bold text-primary">4.9/5.0</span>
+                  <span className="font-bold">{myListings?.length || 0}</span>
                 </div>
               </CardContent>
             </Card>
@@ -133,46 +185,51 @@ export default function DashboardPage() {
                     Incoming Proposals
                   </h3>
                   
-                  {/* Mock Incoming Proposal */}
-                  <Card className="rounded-2xl border bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                    <CardContent className="p-6">
-                      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div className="flex items-center gap-4 flex-1">
-                          <div className="relative h-20 w-20 rounded-xl overflow-hidden shadow-inner flex-shrink-0">
-                            <Image src={ITEMS[0].imageUrl} alt="Item" fill className="object-cover" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-muted-foreground">For your listing:</p>
-                            <h4 className="font-headline font-bold text-lg">{MY_ITEMS[0].title}</h4>
-                          </div>
-                        </div>
+                  {isIncomingLoading ? (
+                    <div className="p-12 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div>
+                  ) : pendingIncoming.length > 0 ? (
+                    pendingIncoming.map((proposal) => (
+                      <Card key={proposal.id} className="rounded-2xl border bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                        <CardContent className="p-6">
+                          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-muted-foreground">New proposal received</p>
+                              <h4 className="font-headline font-bold text-lg">{proposal.message || "Wants to trade with you"}</h4>
+                              <p className="text-xs text-muted-foreground">Offered {proposal.offeredItemIds.length} item(s)</p>
+                            </div>
 
-                        <RefreshCw className="h-8 w-8 text-muted-foreground rotate-90" />
-
-                        <div className="flex items-center gap-4 flex-1">
-                          <div className="relative h-20 w-20 rounded-xl overflow-hidden shadow-inner flex-shrink-0 border-2 border-primary/20">
-                            <Image src={ITEMS[2].imageUrl} alt="Offer" fill className="object-cover" />
+                            <div className="flex gap-2 w-full md:w-auto">
+                              <Button 
+                                onClick={() => handleUpdateStatus(proposal.id, 'Accepted')}
+                                className="bg-primary rounded-xl flex-1 md:flex-none"
+                              >
+                                Accept
+                              </Button>
+                              <Button 
+                                onClick={() => handleUpdateStatus(proposal.id, 'Declined')}
+                                variant="outline" 
+                                className="rounded-xl flex-1 md:flex-none"
+                              >
+                                Decline
+                              </Button>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-sm font-medium text-muted-foreground">Offer from <strong>Charlie</strong>:</p>
-                            <h4 className="font-headline font-bold text-lg">{ITEMS[2].title}</h4>
+                          <div className="mt-4 pt-4 border-t flex items-center justify-between text-xs text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              Received {new Date(proposal.proposalDate).toLocaleDateString()}
+                            </div>
+                            <Link href={`/proposals/${proposal.id}`} className="text-primary font-bold hover:underline">View Details</Link>
                           </div>
-                        </div>
-
-                        <div className="flex gap-2 w-full md:w-auto">
-                          <Button className="bg-primary rounded-xl flex-1 md:flex-none">Accept</Button>
-                          <Button variant="outline" className="rounded-xl flex-1 md:flex-none">Decline</Button>
-                        </div>
-                      </div>
-                      <div className="mt-4 pt-4 border-t flex items-center justify-between text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          Received 3 hours ago
-                        </div>
-                        <Link href="/proposals/1" className="text-primary font-bold hover:underline">View Conversation</Link>
-                      </div>
-                    </CardContent>
-                  </Card>
+                        </CardContent>
+                      </Card>
+                    ))
+                  ) : (
+                    <div className="p-12 text-center bg-muted/30 rounded-2xl border-2 border-dashed">
+                      <Inbox className="h-8 w-8 mx-auto text-muted-foreground mb-2 opacity-50" />
+                      <p className="text-muted-foreground">No pending incoming proposals.</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-4 pt-6">
@@ -181,38 +238,38 @@ export default function DashboardPage() {
                     Sent Proposals
                   </h3>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card className="rounded-2xl border bg-white p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="relative h-12 w-12 rounded-lg overflow-hidden flex-shrink-0">
-                          <Image src={ITEMS[1].imageUrl} alt="Target" fill className="object-cover" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs text-muted-foreground truncate">Offer for <strong>Bob's {ITEMS[1].title}</strong></p>
-                          <div className="flex items-center gap-2">
-                            <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100 border-none px-2 py-0 h-5">Pending</Badge>
-                            <span className="text-xs text-muted-foreground">2 days ago</span>
-                          </div>
-                        </div>
-                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                      </div>
-                    </Card>
-                    <Card className="rounded-2xl border bg-white p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="relative h-12 w-12 rounded-lg overflow-hidden flex-shrink-0">
-                          <Image src={ITEMS[4].imageUrl} alt="Target" fill className="object-cover" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs text-muted-foreground truncate">Offer for <strong>Diana's {ITEMS[4].title}</strong></p>
-                          <div className="flex items-center gap-2">
-                            <Badge className="bg-red-100 text-red-700 hover:bg-red-100 border-none px-2 py-0 h-5">Declined</Badge>
-                            <span className="text-xs text-muted-foreground">1 week ago</span>
-                          </div>
-                        </div>
-                        <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                      </div>
-                    </Card>
-                  </div>
+                  {isSentLoading ? (
+                    <div className="p-12 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div>
+                  ) : sentProposals && sentProposals.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {sentProposals.map((proposal) => (
+                        <Link key={proposal.id} href={`/proposals/${proposal.id}`}>
+                          <Card className="rounded-2xl border bg-white p-4 hover:shadow-md transition-shadow">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs text-muted-foreground truncate">Proposal for your items</p>
+                                <div className="flex items-center gap-2">
+                                  <Badge className={`${
+                                    proposal.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' :
+                                    proposal.status === 'Accepted' ? 'bg-green-100 text-green-700' :
+                                    'bg-red-100 text-red-700'
+                                  } border-none px-2 py-0 h-5`}>
+                                    {proposal.status}
+                                  </Badge>
+                                  <span className="text-xs text-muted-foreground">{new Date(proposal.proposalDate).toLocaleDateString()}</span>
+                                </div>
+                              </div>
+                              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                            </div>
+                          </Card>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-12 text-center bg-muted/30 rounded-2xl border-2 border-dashed">
+                      <p className="text-muted-foreground">You haven't sent any proposals yet.</p>
+                    </div>
+                  )}
                 </div>
               </TabsContent>
 
@@ -220,7 +277,7 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-headline font-bold flex items-center gap-2">
                     <Package className="h-5 w-5 text-primary" />
-                    My Items ({MY_ITEMS.length})
+                    My Items ({myListings?.length || 0})
                   </h3>
                   <Link href="/list-item">
                     <Button variant="outline" className="rounded-xl border-primary text-primary hover:bg-primary/5">
@@ -230,14 +287,30 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
-                  {MY_ITEMS.map(item => (
-                    <div key={item.id} className="relative">
-                      <ItemCard item={item} />
-                      <div className="absolute top-4 left-4">
-                         <Badge className="bg-white/90 text-primary border-none shadow-sm">My Item</Badge>
+                  {isListingsLoading ? (
+                     <div className="col-span-full py-20 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div>
+                  ) : myListings && myListings.length > 0 ? (
+                    myListings.map(item => (
+                      <div key={item.id} className="relative">
+                        <ItemCard item={{
+                          ...item,
+                          imageUrl: item.imageUrls?.[0] || `https://picsum.photos/seed/${item.id}/600/400`,
+                          ownerName: displayName,
+                          createdAt: item.listedDate
+                        }} />
+                        <div className="absolute top-4 left-4">
+                           <Badge className="bg-white/90 text-primary border-none shadow-sm">My Item</Badge>
+                        </div>
                       </div>
+                    ))
+                  ) : (
+                    <div className="col-span-full py-20 text-center bg-muted/30 rounded-3xl border-2 border-dashed">
+                      <p className="text-muted-foreground">You haven't listed any items yet.</p>
+                      <Link href="/list-item" className="mt-4 inline-block">
+                        <Button variant="outline">List Your First Item</Button>
+                      </Link>
                     </div>
-                  ))}
+                  )}
                 </div>
               </TabsContent>
             </Tabs>
