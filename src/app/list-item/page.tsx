@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,17 +16,20 @@ import {
 } from '@/components/ui/select';
 import { AIHelper } from '@/components/items/AIHelper';
 import { Card, CardContent } from '@/components/ui/card';
-import { Camera, ChevronLeft } from 'lucide-react';
+import { Camera, ChevronLeft, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 
 export default function ListItemPage() {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [condition, setCondition] = useState('');
   const [description, setDescription] = useState('');
+  const [images, setImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -34,7 +37,6 @@ export default function ListItemPage() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
       toast({
@@ -43,6 +45,28 @@ export default function ListItemPage() {
       });
       router.push('/dashboard');
     }, 1500);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const newImages: string[] = [];
+    Array.from(files).forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImages(prev => [...prev, reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const removeImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -124,11 +148,36 @@ export default function ListItemPage() {
 
                   <div className="space-y-2">
                     <Label>Photos</Label>
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      className="hidden" 
+                      accept="image/*" 
+                      multiple 
+                      onChange={handleFileChange} 
+                    />
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                      <div className="aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/50 transition-colors">
-                        <Camera className="h-8 w-8 text-muted-foreground" />
-                        <span className="text-xs font-medium text-muted-foreground">Add Photo</span>
-                      </div>
+                      {images.map((src, index) => (
+                        <div key={index} className="relative aspect-square rounded-xl overflow-hidden border bg-muted">
+                          <Image src={src} alt={`Preview ${index}`} fill className="object-cover grayscale" />
+                          <button 
+                            type="button" 
+                            onClick={() => removeImage(index)}
+                            className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full hover:bg-black transition-colors"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ))}
+                      {images.length < 8 && (
+                        <div 
+                          onClick={triggerFileInput}
+                          className="aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/50 transition-colors"
+                        >
+                          <Camera className="h-8 w-8 text-muted-foreground" />
+                          <span className="text-xs font-medium text-muted-foreground">Add Photo</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
