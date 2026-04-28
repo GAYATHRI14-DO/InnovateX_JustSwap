@@ -24,7 +24,7 @@ export default function Home() {
                 Bartering Reimagined
               </Badge>
               <h1 className="text-5xl lg:text-7xl font-script font-bold leading-[1.1] text-foreground">
-                Get what you <span className="font-merriweather italic underline decoration-accent">NEED</span> without paying money.
+                Get what you <span className="font-merriweather font-normal italic underline decoration-accent">NEED</span> without paying money.
               </h1>
               <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
                 Exchange items with your neighbors. Swap helps you find new homes for your belongings while getting the things you want, sustainably.
