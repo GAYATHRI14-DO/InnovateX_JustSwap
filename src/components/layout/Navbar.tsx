@@ -12,10 +12,10 @@ export function Navbar() {
       <div className="container mx-auto flex items-center justify-between gap-4">
         
         <Link href="/" className="flex items-center gap-2 group">
-          <span className="text-2xl font-headline font-bold tracking-tight text-foreground">JustSwap</span>
           <div className="bg-primary text-white p-2 rounded-xl group-hover:bg-primary/90 transition-colors shadow-sm">
             <SwapLogo className="h-6 w-6" />
           </div>
+          <span className="text-2xl font-headline font-bold tracking-tight text-foreground">JustSwap</span>
         </Link>
 
         <div className="hidden md:flex items-center space-x-6 text-sm font-medium">
