@@ -121,7 +121,7 @@ export default function Home() {
               </p>
             </div>
             <Link href="/browse">
-              <Button variant="link" className="text-primary font-bold gap-2 text-lg">
+              <Button variant="link" className="text-primary underline font-bold gap-2 text-lg">
                 View all items
                 <ArrowRight className="h-5 w-5" />
               </Button>
