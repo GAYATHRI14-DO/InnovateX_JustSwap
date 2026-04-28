@@ -77,7 +77,7 @@ export function Navbar() {
           </Link>
 
           <Link href="/how-it-works" className="hidden md:block transition-colors hover:text-primary text-sm font-medium">
-            How it Works
+            Guide
           </Link>
         </div>
 
