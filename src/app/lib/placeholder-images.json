@@ -1,0 +1,47 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "item-camera",
+      "description": "Vintage film camera",
+      "imageUrl": "https://picsum.photos/seed/swap1/600/400",
+      "imageHint": "vintage camera"
+    },
+    {
+      "id": "item-bike",
+      "description": "Mountain bike in good condition",
+      "imageUrl": "https://picsum.photos/seed/swap2/600/400",
+      "imageHint": "mountain bike"
+    },
+    {
+      "id": "item-headphones",
+      "description": "Premium wireless headphones",
+      "imageUrl": "https://picsum.photos/seed/swap3/600/400",
+      "imageHint": "wireless headphones"
+    },
+    {
+      "id": "item-plant",
+      "description": "Healthy Monstera plant",
+      "imageUrl": "https://picsum.photos/seed/swap4/600/400",
+      "imageHint": "monstera plant"
+    },
+    {
+      "id": "item-watch",
+      "description": "Classic analog watch",
+      "imageUrl": "https://picsum.photos/seed/swap5/600/400",
+      "imageHint": "classic watch"
+    },
+    {
+      "id": "item-speaker",
+      "description": "Bluetooth portable speaker",
+      "imageUrl": "https://picsum.photos/seed/swap6/600/400",
+      "imageHint": "portable speaker"
+    },
+    {
+      "id": "hero-image",
+      "description": "People exchanging items happily",
+      "imageUrl": "https://picsum.photos/seed/swaphero/1200/800",
+      "imageHint": "community exchange"
+    }
+  ]
+}
