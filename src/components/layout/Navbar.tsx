@@ -136,9 +136,8 @@ export function Navbar() {
             <div className="flex items-center gap-2">
               {user ? (
                 <Link href="/dashboard">
-                  <Button variant="ghost" className="gap-2">
-                    <User className="h-4 w-4" />
-                    Account
+                  <Button variant="ghost" size="icon" title="Account">
+                    <User className="h-5 w-5" />
                   </Button>
                 </Link>
               ) : null}
