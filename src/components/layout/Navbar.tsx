@@ -34,25 +34,26 @@ export function Navbar() {
           <span className="text-2xl font-headline font-bold tracking-tight text-foreground hidden sm:block">JustSwap</span>
         </Link>
 
-        {/* Center Section: Search Bar and Nav Links */}
-        <div className="flex-1 flex justify-center items-center gap-4 max-w-2xl">
-          <form onSubmit={handleSearch} className="relative w-full max-w-sm hidden md:block">
+        {/* Center Section: Nav Links and Search Toggle */}
+        <div className="flex-1 flex justify-center items-center gap-8 max-w-2xl">
+          <div className="hidden md:flex items-center space-x-8 text-sm font-medium shrink-0">
+            <Link href="/browse" className="transition-colors hover:text-primary">Browse</Link>
+            <Link href="/how-it-works" className="transition-colors hover:text-primary">How it Works</Link>
+            <Link href="/about" className="transition-colors hover:text-primary">About</Link>
+          </div>
+
+          <form onSubmit={handleSearch} className="relative w-full max-w-[200px] hidden lg:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
               type="search"
-              placeholder="Search items to swap..." 
-              className="pl-10 h-10 rounded-xl bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-primary"
+              placeholder="Search..." 
+              className="pl-9 h-9 rounded-xl bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-primary text-xs"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </form>
-
-          <div className="hidden lg:flex items-center space-x-6 text-sm font-medium shrink-0">
-            <Link href="/how-it-works" className="transition-colors hover:text-primary">How it Works</Link>
-            <Link href="/about" className="transition-colors hover:text-primary">About</Link>
-          </div>
           
-          <Link href="/browse" className="md:hidden">
+          <Link href="/browse" className="lg:hidden">
             <Button size="icon" variant="ghost" className="text-primary hover:bg-primary/5 rounded-full">
               <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
