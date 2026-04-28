@@ -17,7 +17,7 @@ export const ITEMS = [
     description: 'Stylish bodycon dress in excellent condition, perfect for parties and events.',
     category: 'Fashion',
     condition: 'Like New',
-    location: 'Manhattan, NY',
+    location: 'Aksami, Manglore',
     imageUrl: 'https://i.etsystatic.com/51992943/r/il/1c0745/7795964576/il_fullxfull.7795964576_ssoa.jpg',
     ownerId: 'user2',
     ownerName: 'Sophia Lee',
