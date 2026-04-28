@@ -1,0 +1,123 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * CORE SECURITY PHILOSOPHY
+     * This ruleset implements a strict authorization model for SwapIt, a peer-to-peer item swapping platform.
+     * 
+     * DATA STRUCTURE & HIERARCHY
+     * 1. User Data (/users/{userId}): Private profile data restricted to the authenticated owner.
+     * 2. Categorization (/categories/{categoryId}): Global, read-only metadata for item classification.
+     * 3. Inventory (/users/{ownerId}/items/{itemId}): Hierarchically nested under the owner's path to 
+     *    enforce ownership at the structural level. Supports public discovery via collection group rules.
+     * 4. Interaction (/swapProposals/{swapProposalId}): Flat collection for peer-to-peer negotiations,
+     *    using denormalized IDs for two-party authorization.
+     * 
+     * KEY SECURITY DECISIONS
+     * - Authorization Independence: We avoid 'get()' calls by using path parameters and denormalized fields
+     *   (like targetItemOwnerId in SwapProposals) to keep rules performant and cost-effective.
+     * - Prototyping Flexibility: Logic strictly enforces *who* can access data based on ownership and 
+     *   relational integrity, but does not restrict the *shape* or *types* of non-relational fields (e.g., bio, description).
+     * - Multi-Party Access: Swap proposals use a 'Shared Access' pattern where both the requester and the 
+     *   item owner are granted visibility and management rights.
+     */
+
+    // --- Helper Functions ---
+
+    /** Checks if the user is authenticated with any provider. */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** Validates if the authenticated user matches the provided ID. */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /** Validates ownership and ensures the document exists for state-changing operations. */
+    function isExistingOwner(userId) {
+      return resource != null && isOwner(userId);
+    }
+
+    /** Checks if the current user is a participant in a swap proposal. */
+    function isParticipant(proposerId, targetOwnerId) {
+      return isSignedIn() && (request.auth.uid == proposerId || request.auth.uid == targetOwnerId);
+    }
+
+    // --- Collection Rules ---
+
+    /**
+     * @description Rules for managing individual user profiles.
+     * @path /users/{userId}
+     * @allow (get/list/update) if auth.uid == userId. (create) if auth.uid matches path and data.id.
+     * @deny (create) if auth.uid != path userId. (update) if attempting to change the document ID.
+     * @principle Path-based ownership and relational integrity for private user data.
+     */
+    match /users/{userId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Rules for accessing global item categories.
+     * @path /categories/{categoryId}
+     * @allow (get/list) for everyone.
+     * @deny (create/update/delete) for all users; managed via administrative processes.
+     * @principle Public read access for static platform metadata.
+     */
+    match /categories/{categoryId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+    /**
+     * @description Rules for items listed by users.
+     * @path /users/{ownerId}/items/{itemId}
+     * @allow (get/list) if owner OR if item is 'Available'. (create/update/delete) if owner.
+     * @deny (create) if ownerId in data != path ownerId. (update) if changing ownerId.
+     * @principle Hierarchical ownership for writes with conditional public visibility for discovery.
+     */
+    match /users/{ownerId}/items/{itemId} {
+      allow get: if isOwner(ownerId) || resource.data.status == 'Available';
+      allow list: if isOwner(ownerId) || resource.data.status == 'Available';
+      allow create: if isOwner(ownerId) && request.resource.data.ownerId == ownerId;
+      allow update: if isExistingOwner(ownerId) && request.resource.data.ownerId == resource.data.ownerId;
+      allow delete: if isExistingOwner(ownerId);
+    }
+
+    /**
+     * @description Support for global item browsing across all users' subcollections.
+     * @path /{path=**}/items/{itemId}
+     * @allow (read) only if the item status is explicitly 'Available'.
+     */
+    match /{path=**}/items/{itemId} {
+      allow read: if resource.data.status == 'Available';
+    }
+
+    /**
+     * @description Rules for managing swap proposals between two users.
+     * @path /swapProposals/{swapProposalId}
+     * @allow (get/list/update) if user is proposer or target owner. (create) if user is proposer.
+     * @deny (update) if attempting to change the proposerId or targetItemOwnerId fields.
+     * @principle Shared access model using denormalized IDs to facilitate two-party interaction.
+     */
+    match /swapProposals/{swapProposalId} {
+      // Note: List access is governed by filters matching proposerId or targetItemOwnerId
+      allow get, list: if isParticipant(resource.data.proposerId, resource.data.targetItemOwnerId);
+      
+      allow create: if isSignedIn() 
+                    && request.resource.data.proposerId == request.auth.uid;
+      
+      allow update: if resource != null 
+                    && isParticipant(resource.data.proposerId, resource.data.targetItemOwnerId)
+                    && request.resource.data.proposerId == resource.data.proposerId
+                    && request.resource.data.targetItemOwnerId == resource.data.targetItemOwnerId;
+      
+      allow delete: if resource != null 
+                    && isParticipant(resource.data.proposerId, resource.data.targetItemOwnerId);
+    }
+  }
+}

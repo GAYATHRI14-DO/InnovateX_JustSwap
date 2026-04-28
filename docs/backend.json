@@ -1,0 +1,293 @@
+{
+  "entities": {
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a user registered on the SwapIt platform, managing their personal information, listed items, and swap history.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the UserProfile entity."
+        },
+        "username": {
+          "type": "string",
+          "description": "A unique username chosen by the user for identification on the platform."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's unique email address, used for communication and account recovery.",
+          "format": "email"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The first name of the user."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The last name of the user."
+        },
+        "bio": {
+          "type": "string",
+          "description": "A short biographical description provided by the user, visible on their public profile."
+        },
+        "location": {
+          "type": "string",
+          "description": "The user's geographical location (e.g., city, state, country) for local swap matching."
+        },
+        "profileImageUrl": {
+          "type": "string",
+          "description": "URL to the user's profile picture.",
+          "format": "uri"
+        },
+        "registrationDate": {
+          "type": "string",
+          "description": "The timestamp when the user registered on the SwapIt platform.",
+          "format": "date-time"
+        },
+        "lastLoginDate": {
+          "type": "string",
+          "description": "The timestamp of the user's most recent login.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "email",
+        "registrationDate"
+      ]
+    },
+    "Category": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Category",
+      "type": "object",
+      "description": "Defines categories that items can belong to, facilitating browsing and search.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Category entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the item category (e.g., 'Electronics', 'Books', 'Clothing')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief explanation or characteristics of the category."
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "Item": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Item",
+      "type": "object",
+      "description": "Represents an item that a user has listed for swapping on the platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Item entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "The short, descriptive title of the item."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the item, potentially AI-generated or refined."
+        },
+        "condition": {
+          "type": "string",
+          "description": "The physical condition of the item.",
+          "format": "enum",
+          "items": {
+            "type": "string"
+          }
+        },
+        "categoryId": {
+          "type": "string",
+          "description": "Reference to the Category this item belongs to. (Relationship: Category 1:N Item)"
+        },
+        "imageUrls": {
+          "type": "array",
+          "description": "An array of URLs pointing to images of the item for visual representation.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who owns and listed this item. (Relationship: UserProfile 1:N Item)"
+        },
+        "listedDate": {
+          "type": "string",
+          "description": "The timestamp when the item was first listed on the platform.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current availability status of the item (e.g., Available, Pending Swap, Swapped, Removed).",
+          "format": "enum",
+          "items": {
+            "type": "string"
+          }
+        },
+        "preferredSwapItemsDescription": {
+          "type": "string",
+          "description": "A textual description of the types of items the owner is looking for in exchange."
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "condition",
+        "categoryId",
+        "imageUrls",
+        "ownerId",
+        "listedDate",
+        "status"
+      ]
+    },
+    "SwapProposal": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SwapProposal",
+      "type": "object",
+      "description": "Represents a proposal made by one user to exchange items with another user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the SwapProposal entity."
+        },
+        "proposerId": {
+          "type": "string",
+          "description": "Reference to the UserProfile who initiated this swap proposal. (Relationship: UserProfile 1:N SwapProposal)"
+        },
+        "targetItemId": {
+          "type": "string",
+          "description": "Reference to the Item that the proposer wishes to acquire. (Relationship: Item 1:N SwapProposal)"
+        },
+        "offeredItemIds": {
+          "type": "array",
+          "description": "An array of references to the Items that the proposer is offering in exchange. (Relationship: Item N:N SwapProposal - indirectly, via an array of IDs)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "proposalDate": {
+          "type": "string",
+          "description": "The timestamp when the swap proposal was created.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the swap proposal (e.g., Pending, Accepted, Declined, Cancelled, Completed).",
+          "format": "enum",
+          "items": {
+            "type": "string"
+          }
+        },
+        "message": {
+          "type": "string",
+          "description": "An optional message included by the proposer with their offer."
+        },
+        "responseDate": {
+          "type": "string",
+          "description": "The timestamp when the proposal received a response (accepted/declined).",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "proposerId",
+        "targetItemId",
+        "offeredItemIds",
+        "proposalDate",
+        "status"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores individual user profiles. Access is restricted to the authenticated user whose `uid` matches `{userId}`. The `id` field within the document must match `{userId}`. This path ensures path-based ownership for private user data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user, matching `request.auth.uid`."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/categories/{categoryId}",
+        "definition": {
+          "entityName": "Category",
+          "schema": {
+            "$ref": "#/backend/entities/Category"
+          },
+          "description": "Contains globally accessible and typically read-only categories for items. All users can read documents in this collection.",
+          "params": [
+            {
+              "name": "categoryId",
+              "description": "The unique ID of the category."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{ownerId}/items/{itemId}",
+        "definition": {
+          "entityName": "Item",
+          "schema": {
+            "$ref": "#/backend/entities/Item"
+          },
+          "description": "Stores items listed by users. This nested path ensures strong ownership, where `{ownerId}` matches `request.auth.uid`. The `ownerId` field is also redundantly stored within the document. Items with `status: 'Available'` are readable by all users via collection group queries on 'items', supporting global browsing, while write access is restricted to the item's owner.",
+          "params": [
+            {
+              "name": "ownerId",
+              "description": "The unique ID of the user who owns and listed the item."
+            },
+            {
+              "name": "itemId",
+              "description": "The unique ID of the item."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/swapProposals/{swapProposalId}",
+        "definition": {
+          "entityName": "SwapProposal",
+          "schema": {
+            "$ref": "#/backend/entities/SwapProposal"
+          },
+          "description": "Manages all swap proposals. Documents include `proposerId` and a **denormalized `targetItemOwnerId`** for authorization independence. Access is granted to either the `proposerId` or the `targetItemOwnerId`, enabling efficient incoming/outgoing proposal queries without `get()` calls in rules. This crucial denormalization ensures QAP compliance and simplifies security rules for this two-party interaction.",
+          "params": [
+            {
+              "name": "swapProposalId",
+              "description": "The unique ID of the swap proposal."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure for SwapIt prioritizes secure, scalable, and debuggable access patterns by adhering to the core design principles and strategy mandates. \n\n**Authorization Independence (CRITICAL):** This structure explicitly avoids hierarchical authorization dependencies that would require `get()` calls in security rules. For example:\n*   `UserProfile` documents are stored at `/users/{userId}`, where `userId` matches `request.auth.uid`, making authorization direct and explicit.\n*   `Item` documents are stored under `/users/{ownerId}/items/{itemId}`. The `ownerId` in the path directly ties ownership to the authenticated user, eliminating the need to `get()` a parent user document to check permissions. The `ownerId` is also redundantly stored within the `Item` document to allow for flexible querying and further reinforce security.\n*   `SwapProposal` documents are stored in a top-level collection `/swapProposals/{swapProposalId}`. To ensure authorization independence for both the proposer and the target item owner, the `ownerId` of the `targetItemId` is **denormalized** into the `SwapProposal` document as `targetItemOwnerId`. This crucial denormalization allows rules to check `request.auth.uid` against `proposerId` or `targetItemOwnerId` directly within the `SwapProposal` document itself, without needing to `get()` the `Item` document or its owner.\n\n**QAPs (Rules are not Filters) and Structural Segregation:** The design facilitates Queryable Access Patterns (QAPs) by ensuring that security rules do not act as filters on large datasets, and by segregating data based on its security posture:\n*   **Private User Data:** `UserProfile` data is stored under `/users/{userId}`, ensuring that users can only access their own profiles. Listing a user's own profile is a direct `get()` or a collection query on a very small scope (their own subcollection).\n*   **User-Owned Items:** Items are stored under `/users/{ownerId}/items/{itemId}`. A user can easily list all their own items via `db.collection('users').doc(request.auth.uid).collection('items')`. For global browsing of available items (as required by \"Browse and Search Items\"), a collection group query on `items` subcollections can be performed, with rules ensuring that only items with `status: 'Available'` are readable by unauthenticated or other authenticated users. This combination enables both direct owner access and global discovery in a QAP-compliant manner, by offloading the 'public' filtering to the `status` field in rules.\n*   **Public Static Data:** `Category` documents are stored in a top-level `/categories` collection, making them globally readable by all users, which is ideal for dropdowns and filtering UIs.\n*   **Private Interaction Data:** `SwapProposal` documents are in a top-level `/swapProposals`. Users can query for \"my incoming proposals\" by filtering `where('targetItemOwnerId', '==', request.auth.uid)` and \"my outgoing proposals\" by filtering `where('proposerId', '==', request.auth.uid)`. These queries are efficient and directly align with QAPs, as `proposerId` and `targetItemOwnerId` are explicitly denormalized for direct access by rules.\n\n**Consistency and Predictability:** Semantic naming conventions are used (e.g., `userId`, `ownerId`, `swapProposalId`), and explicit `status` fields are used in `Item` and `SwapProposal` entities to clearly define state transitions, aiding in debugging and rule clarity. The structural hierarchy for user-owned items reinforces ownership."
+  }
+}
