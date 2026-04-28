@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, PlusCircle, User } from 'lucide-react';
+import { Search, PlusCircle, User, Bell } from 'lucide-react';
 import { SwapLogo } from './SwapLogo';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -69,6 +69,11 @@ export function Navbar() {
               List Item
             </Button>
           </Link>
+
+          <Button size="icon" variant="ghost" className="text-primary hover:bg-primary/5 rounded-full">
+            <Bell className="h-5 w-5" />
+            <span className="sr-only">Notifications</span>
+          </Button>
 
           <Link href="/dashboard">
             <Button size="icon" variant="ghost" className="text-primary hover:bg-primary/5 rounded-full">
