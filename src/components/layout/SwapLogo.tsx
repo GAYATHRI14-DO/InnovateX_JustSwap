@@ -7,8 +7,9 @@ export function SwapLogo({ className }: { className?: string }) {
       className={className} 
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M4.5 14c0-4.5 5.5-7.5 9.5-4 0 0-3.5 11-9.5 4Z" />
-      <path d="M19.5 10c0 4.5-5.5 7.5-9.5 4 0 0 3.5-11 9.5-4Z" />
+      {/* Refined organic twin-fin shapes representing the Swap brand */}
+      <path d="M3.8 17.2C2.1 13.1 7.2 8.4 12 11.2C12 11.2 9.5 22.3 3.8 17.2Z" />
+      <path d="M20.2 6.8C21.9 10.9 16.8 15.6 12 12.8C12 12.8 14.5 1.7 20.2 6.8Z" />
     </svg>
   );
 }
