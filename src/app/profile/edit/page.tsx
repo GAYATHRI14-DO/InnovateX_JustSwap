@@ -51,13 +51,14 @@ export default function EditProfilePage() {
 
     setIsSubmitting(true);
     
+    // Ensure no field is undefined as Firestore will throw an error
     const updatedProfile = {
       id: user.uid,
-      firstName,
-      lastName,
-      bio,
-      username: profile?.username || user.email?.split('@')[0],
-      email: user.email,
+      firstName: firstName || '',
+      lastName: lastName || '',
+      bio: bio || '',
+      username: profile?.username || user.email?.split('@')[0] || user.uid,
+      email: user.email || '',
       lastLoginDate: serverTimestamp(),
       registrationDate: profile?.registrationDate || serverTimestamp(),
     };
