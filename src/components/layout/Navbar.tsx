@@ -13,8 +13,8 @@ function SwapLogo({ className }: { className?: string }) {
       className={className} 
       xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M3.5 14.5c0-4 4-6.5 7.5-3.5 0 0-2 8-7.5 3.5Z" />
-      <path d="M20.5 9.5c0 4-4 6.5-7.5 3.5 0 0 2-8 7.5-3.5Z" />
+      <path d="M4.5 14c0-4.5 5.5-7.5 9.5-4 0 0-3.5 11-9.5 4Z" />
+      <path d="M19.5 10c0 4.5-5.5 7.5-9.5 4 0 0 3.5-11 9.5-4Z" />
     </svg>
   );
 }
