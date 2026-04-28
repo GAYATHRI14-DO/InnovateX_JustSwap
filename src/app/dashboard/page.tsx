@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { MY_ITEMS, CURRENT_USER, ITEMS } from '@/lib/mock-data';
+import { MY_ITEMS, ITEMS } from '@/lib/mock-data';
 import { ItemCard } from '@/components/items/ItemCard';
 import { 
   Package, 
@@ -16,13 +16,43 @@ import {
   LogOut, 
   ChevronRight, 
   Clock, 
-  CheckCircle2, 
-  XCircle 
+  Loader2
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
+import { useAuth } from '@/firebase';
 
 export default function DashboardPage() {
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+  const firestore = useFirestore();
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+
+  const { data: profile, isLoading: isProfileLoading } = useDoc(userDocRef);
+
+  const handleSignOut = () => {
+    signOut(auth);
+  };
+
+  if (isUserLoading || isProfileLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const displayName = profile?.firstName ? `${profile.firstName} ${profile.lastName}` : (user?.displayName || 'User');
+  const userEmail = user?.email || 'No email';
+  const userAvatar = user?.photoURL || `https://picsum.photos/seed/${user?.uid}/200/200`;
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
@@ -34,12 +64,12 @@ export default function DashboardPage() {
             <Card className="rounded-3xl border shadow-sm overflow-hidden">
               <CardContent className="p-6 text-center space-y-4">
                 <Avatar className="h-24 w-24 mx-auto border-4 border-white shadow-lg">
-                  <AvatarImage src={CURRENT_USER.avatar} />
-                  <AvatarFallback>SS</AvatarFallback>
+                  <AvatarImage src={userAvatar} />
+                  <AvatarFallback>{displayName[0]}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <h2 className="text-2xl font-headline font-bold">{CURRENT_USER.name}</h2>
-                  <p className="text-sm text-muted-foreground">{CURRENT_USER.email}</p>
+                  <h2 className="text-2xl font-headline font-bold">{displayName}</h2>
+                  <p className="text-sm text-muted-foreground">{userEmail}</p>
                 </div>
                 <div className="flex justify-center gap-2">
                   <Badge variant="secondary" className="bg-primary/10 text-primary font-bold">Verified Member</Badge>
@@ -51,7 +81,11 @@ export default function DashboardPage() {
                       Edit Profile
                     </Button>
                   </Link>
-                  <Button variant="outline" className="w-full justify-start gap-2 rounded-xl text-destructive hover:bg-destructive/5 hover:text-destructive">
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start gap-2 rounded-xl text-destructive hover:bg-destructive/5 hover:text-destructive"
+                    onClick={handleSignOut}
+                  >
                     <LogOut className="h-4 w-4" />
                     Sign Out
                   </Button>
