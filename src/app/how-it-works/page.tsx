@@ -6,8 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Package, Search, Handshake, ShieldCheck, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function HowItWorksPage() {
+  const barterHero = PlaceHolderImages.find(img => img.id === 'barter-hero');
+
   const steps = [
     {
       title: "1. List Your Items",
@@ -38,14 +41,17 @@ export default function HowItWorksPage() {
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                 JustSwap is a community-driven platform designed to make bartering easy, safe, and sustainable.
               </p>
-              <div className="relative max-w-3xl mx-auto aspect-[16/9] rounded-[2rem] overflow-hidden shadow-xl border bg-muted">
-                <Image 
-                  src="https://picsum.photos/seed/barter/1200/800" 
-                  alt="Barter item exchange illustration" 
-                  fill 
-                  className="object-cover" 
-                  data-ai-hint="barter exchange"
-                />
+              <div className="relative max-w-3xl mx-auto aspect-[16/9] rounded-[2rem] overflow-hidden shadow-xl border bg-muted group">
+                {barterHero && (
+                  <Image 
+                    src={barterHero.imageUrl} 
+                    alt={barterHero.description} 
+                    fill 
+                    className="object-cover transition-transform duration-500 group-hover:scale-105" 
+                    data-ai-hint={barterHero.imageHint}
+                  />
+                )}
+                <div className="absolute inset-0 bg-black/5 pointer-events-none" />
               </div>
             </div>
           </div>
