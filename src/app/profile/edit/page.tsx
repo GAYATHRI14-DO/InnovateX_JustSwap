@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,34 +9,94 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { CURRENT_USER } from '@/lib/mock-data';
-import { Camera, ChevronLeft, Save, X } from 'lucide-react';
+import { Camera, ChevronLeft, Save, X, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc, serverTimestamp } from 'firebase/firestore';
+import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 export default function EditProfilePage() {
-  const [name, setName] = useState(CURRENT_USER.name);
-  const [email, setEmail] = useState(CURRENT_USER.email);
-  const [bio, setBio] = useState('Passionate about sustainability and community building through bartering.');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
 
+  const userDocRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+
+  const { data: profile, isLoading: isProfileLoading } = useDoc(userDocRef);
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [bio, setBio] = useState('');
+  const [username, setUsername] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (profile) {
+      setFirstName(profile.firstName || '');
+      setLastName(profile.lastName || '');
+      setBio(profile.bio || '');
+      setUsername(profile.username || '');
+    } else if (user && !isProfileLoading) {
+        // Fallback if profile doesn't exist yet but user is logged in
+        setFirstName(user.displayName?.split(' ')[0] || '');
+        setLastName(user.displayName?.split(' ').slice(1).join(' ') || '');
+    }
+  }, [profile, user, isProfileLoading]);
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user || !userDocRef) return;
+
     setIsSubmitting(true);
     
-    // Simulate API call
+    const updatedProfile = {
+      id: user.uid,
+      firstName,
+      lastName,
+      bio,
+      username: username || user.email?.split('@')[0],
+      email: user.email,
+      lastLoginDate: serverTimestamp(),
+      registrationDate: profile?.registrationDate || serverTimestamp(),
+    };
+
+    setDocumentNonBlocking(userDocRef, updatedProfile, { merge: true });
+
+    toast({
+      title: "Profile Updated",
+      description: "Your changes have been saved successfully.",
+    });
+    
+    // Optimistic redirect
     setTimeout(() => {
-      setIsSubmitting(false);
-      toast({
-        title: "Profile Updated",
-        description: "Your changes have been saved successfully.",
-      });
-      router.push('/dashboard');
-    }, 1500);
+        router.push('/dashboard');
+    }, 500);
   };
+
+  if (isUserLoading || isProfileLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <h1 className="text-2xl font-bold mb-4">Please sign in to edit your profile.</h1>
+        <Link href="/">
+          <Button>Back to home</Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -58,43 +118,54 @@ export default function EditProfilePage() {
               <div className="flex flex-col items-center gap-4">
                 <div className="relative group">
                   <Avatar className="h-32 w-32 border-4 border-white shadow-xl">
-                    <AvatarImage src={CURRENT_USER.avatar} />
-                    <AvatarFallback>SS</AvatarFallback>
+                    <AvatarImage src={user.photoURL || `https://picsum.photos/seed/${user.uid}/200/200`} />
+                    <AvatarFallback>{firstName?.[0] || user.email?.[0]?.toUpperCase() || 'U'}</AvatarFallback>
                   </Avatar>
                   <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                     <Camera className="h-8 w-8 text-white" />
                   </div>
                 </div>
                 <div className="text-center">
-                  <CardTitle className="text-xl">{name}</CardTitle>
+                  <CardTitle className="text-xl">{firstName} {lastName}</CardTitle>
                   <p className="text-sm text-muted-foreground">Profile Picture</p>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="p-8">
               <form onSubmit={handleSave} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input 
-                    id="name" 
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="h-12 rounded-xl"
-                    placeholder="Enter your name"
-                    required
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input 
+                      id="firstName" 
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="h-12 rounded-xl"
+                      placeholder="First name"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input 
+                      id="lastName" 
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="h-12 rounded-xl"
+                      placeholder="Last name"
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
+                  <Label htmlFor="username">Username</Label>
                   <Input 
-                    id="email" 
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="username" 
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     className="h-12 rounded-xl"
-                    placeholder="Enter your email"
-                    required
+                    placeholder="Choose a username"
                   />
                 </div>
 
@@ -118,7 +189,7 @@ export default function EditProfilePage() {
                     className="flex-1 h-12 rounded-xl font-bold gap-2"
                     disabled={isSubmitting}
                   >
-                    <Save className="h-4 w-4" />
+                    {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                     {isSubmitting ? "Saving..." : "Save Changes"}
                   </Button>
                   <Link href="/dashboard" className="flex-1">
