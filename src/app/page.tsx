@@ -86,9 +86,9 @@ export default function Home() {
                     {isSwapsLoading ? (
                       <span className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Checking swaps...</span>
                     ) : recentSwaps && recentSwaps.length > 0 ? (
-                      `Recent Swap: ${recentSwaps[0].message || "Successful Exchange"}`
+                      `${recentSwaps[0].message || "Successful Exchange"}`
                     ) : (
-                      "No swaps yet"
+                      "No swaps"
                     )}
                   </p>
                 </div>
