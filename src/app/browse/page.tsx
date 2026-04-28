@@ -14,7 +14,7 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { ITEMS } from '@/lib/mock-data';
-import { Search, Filter, SlidersHorizontal } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 export default function BrowsePage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -77,17 +77,6 @@ export default function BrowsePage() {
                   <SelectItem value="Fair">Fair</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-            
-            <div className="flex items-center justify-between pt-2 border-t text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Filter className="h-4 w-4" />
-                Showing {filteredItems.length} items
-              </div>
-              <Button variant="ghost" className="gap-2 text-primary hover:bg-primary/5">
-                <SlidersHorizontal className="h-4 w-4" />
-                More Filters
-              </Button>
             </div>
           </div>
 
