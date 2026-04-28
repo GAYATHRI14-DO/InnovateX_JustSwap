@@ -60,7 +60,7 @@ export default function LandingAuthPage() {
           <div className="space-y-4">
             <h1 className="text-5xl lg:text-7xl font-script font-bold leading-tight text-foreground">
               Exchange Smart. <br />
-              <span className="text-muted-foreground italic">Live Sustainable.</span>
+              <span className="font-merriweather text-muted-foreground italic">Live Sustainable.</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
               Join your local community in reducing waste and saving money. Swap items you no longer need for things you want, sustainably.
