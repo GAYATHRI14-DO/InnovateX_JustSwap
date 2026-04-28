@@ -12,10 +12,12 @@ import { SwapLogo } from '@/components/layout/SwapLogo';
 import { Badge } from '@/components/ui/badge';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, limit } from 'firebase/firestore';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function Home() {
   const firestore = useFirestore();
   const featuredItems = ITEMS.slice(0, 4);
+  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-camera');
 
   const recentSwapsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -70,14 +72,16 @@ export default function Home() {
               </div>
             </div>
             <div className="relative aspect-square lg:aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-1000">
-              <Image 
-                src="https://picsum.photos/seed/swaphero/1200/800"
-                alt="Swap Hero"
-                fill
-                className="object-cover"
-                data-ai-hint="community exchange"
-                priority
-              />
+              {heroImage && (
+                <Image 
+                  src={heroImage.imageUrl}
+                  alt={heroImage.description}
+                  fill
+                  className="object-cover grayscale"
+                  data-ai-hint={heroImage.imageHint}
+                  priority
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/90 backdrop-blur rounded-2xl flex items-center justify-between">
                 <div>

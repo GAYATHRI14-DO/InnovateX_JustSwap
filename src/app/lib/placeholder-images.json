@@ -2,6 +2,12 @@
 {
   "placeholderImages": [
     {
+      "id": "hero-camera",
+      "description": "Vintage film camera on a wooden table",
+      "imageUrl": "https://picsum.photos/seed/vintage-camera/1200/800",
+      "imageHint": "vintage camera"
+    },
+    {
       "id": "item-camera",
       "description": "Vintage film camera",
       "imageUrl": "https://picsum.photos/seed/swap1/600/400",
@@ -36,12 +42,6 @@
       "description": "Bluetooth portable speaker",
       "imageUrl": "https://picsum.photos/seed/swap6/600/400",
       "imageHint": "portable speaker"
-    },
-    {
-      "id": "hero-image",
-      "description": "People exchanging items happily",
-      "imageUrl": "https://picsum.photos/seed/swaphero/1200/800",
-      "imageHint": "community exchange"
     },
     {
       "id": "barter-hero",
