@@ -95,7 +95,7 @@ export default function Home() {
                       </div>
                       <div>
                         <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Recent Swap Activity</p>
-                        <p className="text-xs font-medium">Someone just swapped a vintage item!</p>
+                        <p className="text-xs font-medium">Someone just swapped an item!</p>
                       </div>
                     </div>
                   </div>

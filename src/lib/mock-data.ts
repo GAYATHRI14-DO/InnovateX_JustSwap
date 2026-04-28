@@ -1,133 +1,50 @@
-
-export interface Item {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  condition: 'New' | 'Like New' | 'Good' | 'Fair' | 'Poor';
-  location: string;
-  imageUrl: string;
-  ownerId: string;
-  ownerName: string;
-  createdAt: string;
-}
-
-export interface SwapProposal {
-  id: string;
-  fromUserId: string;
-  fromUserName: string;
-  toUserId: string;
-  toItemId: string;
-  offeredItemIds: string[];
-  status: 'Pending' | 'Accepted' | 'Declined';
-  createdAt: string;
-}
-
-export const ITEMS: Item[] = [
+export const ITEMS = [
   {
     id: '1',
     title: 'Vintage Film Camera',
-    description: 'A beautifully preserved vintage film camera, perfect for photography enthusiasts. Fully functional with minor wear.',
+    description: 'Beautifully preserved vintage film camera, ideal for collectors and photography lovers.',
     category: 'Electronics',
     condition: 'Good',
     location: 'Brooklyn, NY',
-    imageUrl: 'https://picsum.photos/seed/swap1/600/400',
+    imageUrl: 'https://i.etsystatic.com/5356285/r/il/7ee563/3064919200/il_570xN.3064919200_ja9j.jpg',
     ownerId: 'user1',
     ownerName: 'Alice Green',
-    createdAt: '2023-10-01'
+    createdAt: '2024-01-01'
   },
   {
     id: '2',
-    title: 'Mountain Bike',
-    description: 'Sturdy mountain bike, 21-speed, great for trails. Recently tuned up.',
-    category: 'Sporting Goods',
+    title: 'Bodycon Dress',
+    description: 'Stylish bodycon dress in excellent condition, perfect for parties and events.',
+    category: 'Fashion',
     condition: 'Like New',
-    location: 'Portland, OR',
-    imageUrl: 'https://picsum.photos/seed/swap2/600/400',
+    location: 'Manhattan, NY',
+    imageUrl: 'https://i.etsystatic.com/51992943/r/il/1c0745/7795964576/il_fullxfull.7795964576_ssoa.jpg',
     ownerId: 'user2',
-    ownerName: 'Bob Smith',
-    createdAt: '2023-10-05'
+    ownerName: 'Sophia Lee',
+    createdAt: '2024-01-02'
   },
   {
     id: '3',
     title: 'Wireless Headphones',
-    description: 'High-quality noise-cancelling headphones. Comes with original case and charger.',
+    description: 'Premium wireless headphones with excellent sound quality and battery life.',
     category: 'Electronics',
-    condition: 'New',
-    location: 'Austin, TX',
-    imageUrl: 'https://picsum.photos/seed/swap3/600/400',
+    condition: 'Good',
+    location: 'San Francisco, CA',
+    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiFB5SK6aCr-HuA3uEnu5aVGZ4ts2bgM6fCQ&s',
     ownerId: 'user3',
-    ownerName: 'Charlie Brown',
-    createdAt: '2023-10-10'
+    ownerName: 'John Smith',
+    createdAt: '2024-01-03'
   },
   {
     id: '4',
-    title: 'Large Monstera Plant',
-    description: 'Very healthy Monstera deliciosa. About 3 feet tall, including the pot.',
+    title: 'Flower Pot',
+    description: 'Large decorative flower pot, perfect for indoor or outdoor plants.',
     category: 'Home & Garden',
-    condition: 'Good',
-    location: 'Seattle, WA',
-    imageUrl: 'https://picsum.photos/seed/swap4/600/400',
-    ownerId: 'user1',
-    ownerName: 'Alice Green',
-    createdAt: '2023-10-12'
-  },
-  {
-    id: '5',
-    title: 'Leather Designer Watch',
-    description: 'Elegant leather strap watch. Needs a new battery but otherwise perfect.',
-    category: 'Fashion',
-    condition: 'Like New',
-    location: 'Chicago, IL',
-    imageUrl: 'https://picsum.photos/seed/swap5/600/400',
+    condition: 'New',
+    location: 'Austin, TX',
+    imageUrl: 'https://5.imimg.com/data5/SELLER/Default/2024/8/444306354/OJ/IL/BT/108048478/decorative-flowerpot-stylish-pots-and-planters-for-garden-with-unique-design-500x500.png',
     ownerId: 'user4',
-    ownerName: 'Diana Prince',
-    createdAt: '2023-10-15'
-  },
-  {
-    id: '6',
-    title: 'Portable Bluetooth Speaker',
-    description: 'Waterproof speaker with 20 hours of battery life. Great sound quality.',
-    category: 'Electronics',
-    condition: 'Good',
-    location: 'Miami, FL',
-    imageUrl: 'https://picsum.photos/seed/swap6/600/400',
-    ownerId: 'user2',
-    ownerName: 'Bob Smith',
-    createdAt: '2023-10-20'
-  }
-];
-
-export const CURRENT_USER = {
-  id: 'me',
-  name: 'Sam Swap',
-  email: 'sam@example.com',
-  avatar: 'https://picsum.photos/seed/me/100/100'
-};
-
-export const MY_ITEMS: Item[] = [
-  {
-    id: 'my-1',
-    title: 'Espresso Machine',
-    description: 'Manual espresso machine, works great. Upgrading to a semi-automatic.',
-    category: 'Home & Garden',
-    condition: 'Good',
-    location: 'Brooklyn, NY',
-    imageUrl: 'https://picsum.photos/seed/myitem1/600/400',
-    ownerId: 'me',
-    ownerName: 'Sam Swap',
-    createdAt: '2023-11-01'
-  },
-  {
-    id: 'my-2',
-    title: 'Board Game Collection',
-    description: 'A set of 5 classic board games including Settlers of Catan and Ticket to Ride.',
-    category: 'Entertainment',
-    condition: 'Like New',
-    location: 'Brooklyn, NY',
-    imageUrl: 'https://picsum.photos/seed/myitem2/600/400',
-    ownerId: 'me',
-    ownerName: 'Sam Swap',
-    createdAt: '2023-11-05'
+    ownerName: 'Emma Brown',
+    createdAt: '2024-01-04'
   }
 ];

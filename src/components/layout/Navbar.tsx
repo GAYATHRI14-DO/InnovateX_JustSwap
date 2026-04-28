@@ -1,9 +1,10 @@
+
 "use client";
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, PlusCircle, User, Bell, RefreshCw, UserPlus, Loader2 } from 'lucide-react';
+import { Search, PlusCircle, User, Bell, UserPlus, Loader2 } from 'lucide-react';
 import { SwapLogo } from './SwapLogo';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -131,20 +132,23 @@ export function Navbar() {
           {/* USER SECTION */}
           {isUserLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
-          ) : user ? (
-            <Link href="/dashboard">
-              <Button variant="ghost" className="gap-2">
-                <User className="h-4 w-4" />
-                Account
-              </Button>
-            </Link>
           ) : (
-            <Link href="/signup">
-              <Button className="gap-2">
-                <UserPlus className="h-4 w-4" />
-                Sign Up
-              </Button>
-            </Link>
+            <div className="flex items-center gap-2">
+              {user ? (
+                <Link href="/dashboard">
+                  <Button variant="ghost" className="gap-2">
+                    <User className="h-4 w-4" />
+                    Account
+                  </Button>
+                </Link>
+              ) : null}
+              <Link href="/signup">
+                <Button className="gap-2">
+                  <UserPlus className="h-4 w-4" />
+                  Sign Up
+                </Button>
+              </Link>
+            </div>
           )}
         </div>
 
