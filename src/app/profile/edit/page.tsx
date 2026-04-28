@@ -131,14 +131,13 @@ export default function EditProfilePage() {
               <form onSubmit={handleSave} className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label htmlFor="firstName">First Name (optional)</Label>
                     <Input 
                       id="firstName" 
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       className="h-12 rounded-xl"
                       placeholder="First name"
-                      required
                     />
                   </div>
                   <div className="space-y-2">
