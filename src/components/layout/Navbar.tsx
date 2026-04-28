@@ -171,9 +171,9 @@ export function Navbar() {
             </Button>
           ) : user ? (
             <Link href="/dashboard">
-              <Button size="icon" variant="ghost" className="text-primary hover:bg-primary/5 rounded-full">
-                <User className="h-5 w-5" />
-                <span className="sr-only">Account</span>
+              <Button variant="ghost" className="text-primary hover:bg-primary/5 rounded-xl font-bold gap-2">
+                <User className="h-4 w-4" />
+                Account
               </Button>
             </Link>
           ) : (

@@ -47,7 +47,7 @@ service cloud.firestore {
     }
 
     match /swapProposals/{swapProposalId} {
-      // Allow list and get for participants or if the swap is accepted (for public activity feed)
+      // Allow read for participants or if the swap is accepted (for public activity feed)
       allow read: if resource.data.status == 'Accepted' 
                   || (isSignedIn() && (request.auth.uid == resource.data.proposerId || request.auth.uid == resource.data.targetItemOwnerId));
       
