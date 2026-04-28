@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -9,7 +8,7 @@ import { useAuth, useUser, initiateGoogleSignIn, initiateAnonymousSignIn } from 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SwapLogo } from "@/components/layout/SwapLogo";
-import { Loader2, Leaf, Globe, Users } from "lucide-react";
+import { Loader2, Globe, Users, ArrowRight } from "lucide-react";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 export default function LandingAuthPage() {
@@ -39,19 +38,19 @@ export default function LandingAuthPage() {
   if (isUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <Loader2 className="h-10 w-10 animate-spin text-foreground" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background selection:bg-primary/20">
+    <div className="min-h-screen flex flex-col bg-background selection:bg-black/10">
       <main className="flex-1 flex flex-col lg:flex-row items-center justify-center p-6 lg:p-12 gap-12 max-w-7xl mx-auto w-full">
         
         {/* Left Side: Illustration & Value Prop */}
         <div className="flex-1 space-y-8 animate-in fade-in slide-in-from-left duration-700">
           <div className="flex items-center gap-3">
-            <div className="bg-primary text-white p-3 rounded-2xl shadow-lg rotate-3">
+            <div className="bg-black text-white p-3 rounded-2xl shadow-lg rotate-3">
               <SwapLogo className="h-8 w-8" />
             </div>
             <span className="text-4xl font-headline font-bold text-foreground">justSwap</span>
@@ -60,16 +59,16 @@ export default function LandingAuthPage() {
           <div className="space-y-4">
             <h1 className="text-5xl lg:text-7xl font-headline font-bold leading-tight text-foreground">
               Exchange Smart. <br />
-              <span className="text-primary italic">Live Sustainable.</span>
+              <span className="text-muted-foreground italic">Live Sustainable.</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
-              Join your local community in reducing waste and saving money. Swap items you no longer need for things you want.
+              Join your local community in reducing waste and saving money. Swap items you no longer need for things you want, sustainably.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
             <div className="flex items-start gap-3">
-              <div className="bg-primary/10 p-2 rounded-xl text-primary">
+              <div className="bg-black/5 p-2 rounded-xl text-foreground">
                 <Globe className="h-5 w-5" />
               </div>
               <div>
@@ -78,7 +77,7 @@ export default function LandingAuthPage() {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <div className="bg-primary/10 p-2 rounded-xl text-primary">
+              <div className="bg-black/5 p-2 rounded-xl text-foreground">
                 <Users className="h-5 w-5" />
               </div>
               <div>
@@ -91,10 +90,10 @@ export default function LandingAuthPage() {
 
         {/* Right Side: Auth Card */}
         <div className="w-full max-w-md animate-in fade-in slide-in-from-right duration-700 delay-200">
-          <Card className="rounded-[3rem] border-none shadow-2xl overflow-hidden bg-white">
+          <Card className="rounded-[3rem] border-2 border-black/5 shadow-2xl overflow-hidden bg-white">
             <CardContent className="p-10 text-center space-y-8">
               <div className="space-y-2">
-                <h2 className="text-3xl font-headline font-bold">Welcome Back</h2>
+                <h2 className="text-3xl font-headline font-bold">Welcome</h2>
                 <p className="text-muted-foreground">Let's get you swapping.</p>
               </div>
 
@@ -104,18 +103,18 @@ export default function LandingAuthPage() {
                     src={heroImage.imageUrl} 
                     alt={heroImage.description} 
                     fill 
-                    className="object-cover transition-transform duration-500 group-hover:scale-110" 
+                    className="object-cover grayscale transition-transform duration-500 group-hover:scale-110" 
                     data-ai-hint={heroImage.imageHint}
                   />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
               </div>
 
               <div className="space-y-4 pt-4">
                 <Button 
                   onClick={handleGoogleSignIn}
                   disabled={isLoggingIn}
-                  className="w-full h-16 rounded-2xl bg-white border-2 border-primary/10 text-foreground font-bold text-lg hover:bg-primary/5 hover:border-primary/20 shadow-sm transition-all flex items-center justify-center gap-3"
+                  className="w-full h-16 rounded-2xl bg-white border-2 border-black/10 text-foreground font-bold text-lg hover:bg-black/5 hover:border-black/20 shadow-sm transition-all flex items-center justify-center gap-3"
                 >
                   <svg className="h-6 w-6" viewBox="0 0 24 24">
                     <path
@@ -142,12 +141,12 @@ export default function LandingAuthPage() {
                   <button 
                     onClick={handleGuestSignIn}
                     disabled={isLoggingIn}
-                    className="text-sm font-bold text-primary hover:text-primary/80 transition-colors"
+                    className="text-sm font-bold text-black hover:text-black/70 transition-colors"
                   >
                     Continue as Guest
                   </button>
                   <p className="text-[10px] text-muted-foreground px-4">
-                    By continuing, you agree to our <Link href="/terms" className="underline hover:text-foreground">Terms</Link> & <Link href="/privacy" className="underline hover:text-foreground">Privacy Policy</Link>
+                    By continuing, you agree to our <Link href="#" className="underline hover:text-foreground">Terms</Link> & <Link href="#" className="underline hover:text-foreground">Privacy Policy</Link>
                   </p>
                 </div>
               </div>
@@ -156,9 +155,9 @@ export default function LandingAuthPage() {
         </div>
       </main>
 
-      <footer className="p-8 text-center border-t border-primary/10">
+      <footer className="p-8 text-center border-t border-black/5">
         <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-          Made with <Leaf className="h-4 w-4 text-primary" /> for the planet. © {new Date().getFullYear()} justSwap
+          Made for the planet. © {new Date().getFullYear()} justSwap
         </p>
       </footer>
     </div>

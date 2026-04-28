@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -46,16 +45,16 @@ export function Navbar() {
         
         <Link href="/" className="flex items-center gap-2 group shrink-0">
           <div className="bg-black text-white p-2 rounded-xl">
-            <SwapLogo className="h-6 w-6 grayscale" />
+            <SwapLogo className="h-6 w-6" />
           </div>
-          <span className="text-2xl font-bold hidden sm:block">JustSwap</span>
+          <span className="text-2xl font-bold hidden sm:block">justSwap</span>
         </Link>
 
         <div className="flex-1 flex justify-center items-center gap-8 max-w-2xl">
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
-            <Link href="/" className="hover:text-black transition-colors">Home</Link>
+            <Link href="/explore" className="hover:text-black transition-colors">Explore</Link>
             <Link href="/about" className="hover:text-black transition-colors">About</Link>
-            <Link href="/how-it-works" className="hover:text-black transition-colors">Guide</Link>
+            <Link href="/items/how-it-works" className="hover:text-black transition-colors">Guide</Link>
           </div>
 
           <form onSubmit={handleSearch} className="relative w-full max-w-[200px] hidden lg:block">
@@ -63,7 +62,7 @@ export function Navbar() {
             <Input 
               type="search"
               placeholder="Search..." 
-              className="pl-9 h-9 rounded-xl border-input bg-background"
+              className="pl-9 h-9 rounded-xl border-black/10 bg-background"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -72,7 +71,7 @@ export function Navbar() {
 
         <div className="flex items-center gap-4">
           <Link href="/list-item" className="hidden sm:block">
-            <Button variant="outline" className="gap-2 rounded-xl border-2 border-black/10 hover:border-black">
+            <Button variant="outline" className="gap-2 rounded-xl border-2 border-black/10 hover:border-black transition-all">
               <PlusCircle className="h-4 w-4" />
               List Item
             </Button>
@@ -81,7 +80,7 @@ export function Navbar() {
           {user && (
             <Popover>
               <PopoverTrigger asChild>
-                <Button size="icon" variant="ghost" className="relative grayscale">
+                <Button size="icon" variant="ghost" className="relative">
                   <Bell className="h-5 w-5" />
                   {notifications && notifications.length > 0 && (
                     <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-black text-[10px] text-white">
@@ -119,17 +118,17 @@ export function Navbar() {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              {user ? (
-                <Link href="/dashboard">
-                  <Button variant="ghost" size="icon" title="Account" className="rounded-xl border border-transparent hover:border-black/10 grayscale">
-                    <User className="h-5 w-5" />
-                  </Button>
-                </Link>
-              ) : (
-                <Link href="/signup">
+              {!user ? (
+                <Link href="/">
                   <Button className="gap-2 rounded-xl font-bold bg-black text-white hover:bg-black/90 shadow-md">
                     <UserPlus className="h-4 w-4" />
                     Sign Up
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/dashboard">
+                  <Button variant="ghost" size="icon" title="Account" className="rounded-xl border border-transparent hover:border-black/10">
+                    <User className="h-5 w-5" />
                   </Button>
                 </Link>
               )}
