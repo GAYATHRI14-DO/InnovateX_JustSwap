@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ITEMS } from '@/lib/mock-data';
 import { ArrowRight, RefreshCw, ShieldCheck, Heart } from 'lucide-react';
 import { SwapLogo } from '@/components/layout/SwapLogo';
+import { Badge } from '@/components/ui/badge';
 
 export default function Home() {
   const featuredItems = ITEMS.slice(0, 4);
@@ -23,7 +24,7 @@ export default function Home() {
               <Badge variant="outline" className="px-4 py-1 text-primary border-primary/20 bg-primary/5 rounded-full font-semibold">
                 Bartering Reimagined
               </Badge>
-              <h1 className="text-5xl lg:text-7xl font-headline font-bold leading-[1.1] text-foreground">
+              <h1 className="text-5xl lg:text-7xl font-script font-bold leading-[1.1] text-foreground">
                 Get what you <span className="text-primary italic underline decoration-accent">NEED</span> without paying money.
               </h1>
               <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
@@ -31,7 +32,7 @@ export default function Home() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/browse">
-                  <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-2xl bg-primary hover:bg-primary/90">
+                  <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90">
                     Explore Listings
                   </Button>
                 </Link>
@@ -67,7 +68,7 @@ export default function Home() {
                   <p className="text-sm font-bold text-primary">Recent Swap</p>
                   <p className="text-lg font-headline font-bold">Vintage Camera for Road Bike</p>
                 </div>
-                <SwapLogo className="h-8 w-8 text-accent" />
+                <SwapLogo className="h-8 w-8 text-foreground" />
               </div>
             </div>
           </div>
@@ -116,7 +117,7 @@ export default function Home() {
                 Join thousands of people who are saving money and living more sustainably by bartering. It takes less than 2 minutes to list an item.
               </p>
               <Link href="/list-item" className="inline-block">
-                <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 h-14 px-10 rounded-2xl font-bold text-lg">
+                <Button size="lg" className="bg-white text-black hover:bg-white/90 h-14 px-10 rounded-2xl font-bold text-lg">
                   Get Started Now
                 </Button>
               </Link>
@@ -126,12 +127,10 @@ export default function Home() {
                 src="https://picsum.photos/seed/cta/800/600" 
                 alt="Community" 
                 fill 
-                className="object-cover"
+                className="object-cover grayscale"
                 data-ai-hint="sustainable living"
               />
             </div>
-            {/* Abstract shapes */}
-            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-accent/20 rounded-full blur-2xl" />
           </div>
         </div>
       </section>
@@ -181,12 +180,4 @@ export default function Home() {
       </footer>
     </div>
   );
-}
-
-function Badge({ children, variant, className }: { children: React.ReactNode, variant?: any, className?: string }) {
-  return (
-    <div className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${className}`}>
-      {children}
-    </div>
-  )
 }
