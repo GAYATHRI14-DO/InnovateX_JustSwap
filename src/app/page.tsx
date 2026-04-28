@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -16,7 +17,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 export default function Home() {
   const firestore = useFirestore();
   const featuredItems = ITEMS.slice(0, 4);
-  const heroImage = PlaceHolderImages.find(img => img.id === 'barter-small');
+  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-camera');
   const ctaImage = PlaceHolderImages.find(img => img.id === 'sustainable-living');
 
   const recentSwapsQuery = useMemoFirebase(() => {
@@ -115,7 +116,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
             <div className="space-y-4">
               <h2 className="text-4xl font-headline font-bold">Featured Items</h2>
-              <p className="text-muted-foreground max-w-xl">
+              <p className="text-muted-foreground max-xl">
                 Discover items available in your community right now. From electronics to plants, everything is up for trade.
               </p>
             </div>
