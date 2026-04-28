@@ -1,4 +1,3 @@
-
 {
   "placeholderImages": [
     {
@@ -16,31 +15,31 @@
     {
       "id": "item-camera",
       "description": "Vintage film camera",
-      "imageUrl": "https://picsum.photos/seed/swap1/600/400",
+      "imageUrl": "https://i.etsystatic.com/5356285/r/il/7ee563/3064919200/il_570xN.3064919200_ja9j.jpg",
       "imageHint": "vintage camera"
     },
     {
-      "id": "item-bike",
-      "description": "Mountain bike in good condition",
-      "imageUrl": "https://picsum.photos/seed/swap2/600/400",
-      "imageHint": "mountain bike"
+      "id": "item-dress",
+      "description": "Bodycon dress in good condition",
+      "imageUrl": "https://i.etsystatic.com/51992943/r/il/1c0745/7795964576/il_fullxfull.7795964576_ssoa.jpg",
+      "imageHint": "Bodycon Dress"
     },
     {
       "id": "item-headphones",
       "description": "Premium wireless headphones",
-      "imageUrl": "https://picsum.photos/seed/swap3/600/400",
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiFB5SK6aCr-HuA3uEnu5aVGZ4ts2bgM6fCQ&s",
       "imageHint": "wireless headphones"
     },
     {
-      "id": "item-plant",
-      "description": "Healthy Monstera plant",
-      "imageUrl": "https://picsum.photos/seed/swap4/600/400",
-      "imageHint": "monstera plant"
+      "id": "item-pot",
+      "description": "Gaint flower pot",
+      "imageUrl": "https://5.imimg.com/data5/SELLER/Default/2024/8/444306354/OJ/IL/BT/108048478/decorative-flowerpot-stylish-pots-and-planters-for-garden-with-unique-design-500x500.png",
+      "imageHint": "Flower Pot"
     },
     {
       "id": "item-watch",
       "description": "Classic analog watch",
-      "imageUrl": "https://picsum.photos/seed/swap5/600/400",
+      "imageUrl": "https://5.imimg.com/data5/ANDROID/Default/2024/7/438401486/OF/VC/XR/209351999/prod-20240727-2334002539037755841796415-jpg-500x500.jpg",
       "imageHint": "classic watch"
     },
     {

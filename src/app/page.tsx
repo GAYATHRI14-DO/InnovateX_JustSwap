@@ -6,7 +6,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { ItemCard } from '@/components/items/ItemCard';
 import { Button } from '@/components/ui/button';
 import { ITEMS } from '@/lib/mock-data';
-import { ArrowRight, RefreshCw, ShieldCheck, Heart, Loader2 } from 'lucide-react';
+import { ArrowRight, RefreshCw, ShieldCheck, Heart } from 'lucide-react';
 import { SwapLogo } from '@/components/layout/SwapLogo';
 import { Badge } from '@/components/ui/badge';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';

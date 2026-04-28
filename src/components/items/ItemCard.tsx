@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Clock } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import type { Item } from '@/lib/mock-data';
 
 export function ItemCard({ item }: { item: Item }) {
