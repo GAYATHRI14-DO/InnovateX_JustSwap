@@ -39,6 +39,7 @@ export function Navbar() {
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium shrink-0">
             <Link href="/" className="transition-colors hover:text-primary">Home</Link>
             <Link href="/about" className="transition-colors hover:text-primary">About</Link>
+            <Link href="/how-it-works" className="transition-colors hover:text-primary">Guide</Link>
           </div>
 
           <form onSubmit={handleSearch} className="relative w-full max-w-[200px] hidden lg:block">
@@ -74,10 +75,6 @@ export function Navbar() {
               <User className="h-5 w-5" />
               <span className="sr-only">Account</span>
             </Button>
-          </Link>
-
-          <Link href="/how-it-works" className="hidden md:block transition-colors hover:text-primary text-sm font-medium">
-            Guide
           </Link>
         </div>
 
