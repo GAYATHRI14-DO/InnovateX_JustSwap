@@ -84,6 +84,21 @@ export default function Home() {
                 />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+              
+              {/* Recent Swap Activity Overlay */}
+              {!isSwapsLoading && recentSwaps && recentSwaps.length > 0 && (
+                <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-white animate-in slide-in-from-bottom duration-1000">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-primary text-white p-2 rounded-xl">
+                      <RefreshCw className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Recent Swap Activity</p>
+                      <p className="text-sm font-medium">Someone just swapped a vintage item!</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
