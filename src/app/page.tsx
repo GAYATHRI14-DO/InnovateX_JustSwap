@@ -43,11 +43,11 @@ export default function Home() {
               <Badge variant="outline" className="px-4 py-1 text-primary border-primary/20 bg-primary/5 rounded-full font-semibold">
                 Bartering Reimagined
               </Badge>
-              <h1 className="text-5xl lg:text-7xl font-script font-bold leading-[1.1] text-foreground">
-                Get what you <span className="font-merriweather font-normal italic underline decoration-accent">NEED</span> without paying money.
+              <h1 className="text-5xl lg:text-7xl font-headline font-bold leading-[1.1] text-foreground">
+                Get what you <span className="italic underline decoration-accent text-muted-foreground/80">NEED</span> without paying money.
               </h1>
               <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
-                Exchange items with your neighbors. Swap helps you find new homes for your belongings while getting the things you want, sustainably.
+                Exchange items with your neighbors. JustSwap helps you find new homes for your belongings while getting the things you want, sustainably.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/browse">
@@ -78,27 +78,12 @@ export default function Home() {
                   src={heroImage.imageUrl}
                   alt={heroImage.description}
                   fill
-                  className="object-cover"
+                  className="object-cover grayscale"
                   data-ai-hint={heroImage.imageHint}
                   priority
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/90 backdrop-blur rounded-2xl flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-bold text-primary">Recent Swap Activity</p>
-                  <p className="text-lg font-headline font-bold">
-                    {isSwapsLoading ? (
-                      <span className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Checking swaps...</span>
-                    ) : recentSwaps && recentSwaps.length > 0 ? (
-                      `${recentSwaps[0].message || "Successful Exchange"}`
-                    ) : (
-                      "No swaps"
-                    )}
-                  </p>
-                </div>
-                <SwapLogo className="h-8 w-8 text-foreground" />
-              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
             </div>
           </div>
         </div>
@@ -204,7 +189,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Swap. All rights reserved.
+            © {new Date().getFullYear()} JustSwap. All rights reserved.
           </div>
         </div>
       </footer>
