@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -17,7 +18,7 @@ export default function LandingAuthPage() {
   const router = useRouter();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  const heroImage = PlaceHolderImages.find(img => img.id === 'sustainable-living');
+  const heroImage = PlaceHolderImages.find(img => img.id === 'item-camera');
 
   useEffect(() => {
     if (user && !isUserLoading) {
@@ -57,7 +58,7 @@ export default function LandingAuthPage() {
           </div>
           
           <div className="space-y-4">
-            <h1 className="text-5xl lg:text-7xl font-headline font-bold leading-tight text-foreground">
+            <h1 className="text-5xl lg:text-7xl font-script font-bold leading-tight text-foreground">
               Exchange Smart. <br />
               <span className="text-muted-foreground italic">Live Sustainable.</span>
             </h1>
@@ -97,7 +98,7 @@ export default function LandingAuthPage() {
                 <p className="text-muted-foreground">Let's get you swapping.</p>
               </div>
 
-              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-inner border bg-muted group">
+              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-inner border bg-muted group max-w-lg mx-auto">
                 {heroImage && (
                   <Image 
                     src={heroImage.imageUrl} 

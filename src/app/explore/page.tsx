@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -16,7 +17,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 export default function ExplorePage() {
   const firestore = useFirestore();
   const featuredItems = ITEMS.slice(0, 4);
-  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-camera');
+  const heroImage = PlaceHolderImages.find(img => img.id === 'item-camera');
   const ctaImage = PlaceHolderImages.find(img => img.id === 'community-collaboration');
 
   const recentSwapsQuery = useMemoFirebase(() => {
@@ -42,7 +43,7 @@ export default function ExplorePage() {
               <Badge variant="outline" className="px-4 py-1 text-black border-black/20 bg-black/5 rounded-full font-semibold uppercase tracking-widest text-[10px]">
                 Bartering Reimagined
               </Badge>
-              <h1 className="text-5xl lg:text-7xl font-headline font-bold leading-[1.1] text-foreground">
+              <h1 className="text-5xl lg:text-7xl font-script font-bold leading-[1.1] text-foreground">
                 Get what you <span className="italic text-muted-foreground">NEED</span> without money.
               </h1>
               <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
