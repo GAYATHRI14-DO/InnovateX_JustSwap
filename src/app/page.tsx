@@ -73,7 +73,7 @@ export default function Home() {
               </div>
             </div>
             <div className="relative flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-md aspect-square rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-1000">
+              <div className="relative w-full max-w-sm aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-1000">
                 {heroImage && (
                   <Image 
                     src={heroImage.imageUrl}
@@ -88,14 +88,14 @@ export default function Home() {
                 
                 {/* Recent Swap Activity Overlay */}
                 {!isSwapsLoading && recentSwaps && recentSwaps.length > 0 && (
-                  <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-white animate-in slide-in-from-bottom duration-1000">
+                  <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-2xl shadow-lg border border-white animate-in slide-in-from-bottom duration-1000">
                     <div className="flex items-center gap-3">
-                      <div className="bg-primary text-white p-2 rounded-xl">
-                        <RefreshCw className="h-4 w-4" />
+                      <div className="bg-primary text-white p-1.5 rounded-xl">
+                        <RefreshCw className="h-3 w-3" />
                       </div>
                       <div>
-                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Recent Swap Activity</p>
-                        <p className="text-sm font-medium">Someone just swapped a vintage item!</p>
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Recent Swap Activity</p>
+                        <p className="text-xs font-medium">Someone just swapped a vintage item!</p>
                       </div>
                     </div>
                   </div>
