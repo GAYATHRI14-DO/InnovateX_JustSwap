@@ -6,8 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Heart, Leaf, Users, ShieldCheck, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function AboutPage() {
+  const missionImage = PlaceHolderImages.find(img => img.id === 'community-collaboration');
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
@@ -27,13 +30,15 @@ export default function AboutPage() {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
               <div className="relative aspect-square rounded-[3rem] overflow-hidden bg-muted">
-                <Image 
-                  src="https://picsum.photos/seed/about-mission/800/800" 
-                  alt="Community collaboration" 
-                  fill 
-                  className="object-cover grayscale"
-                  data-ai-hint="community collaboration"
-                />
+                {missionImage && (
+                  <Image 
+                    src={missionImage.imageUrl} 
+                    alt={missionImage.description} 
+                    fill 
+                    className="object-cover grayscale"
+                    data-ai-hint={missionImage.imageHint}
+                  />
+                )}
               </div>
               <div className="space-y-8">
                 <h2 className="text-4xl font-headline font-bold">Redefining Ownership</h2>

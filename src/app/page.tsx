@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -17,6 +18,7 @@ export default function Home() {
   const firestore = useFirestore();
   const featuredItems = ITEMS.slice(0, 4);
   const heroImage = PlaceHolderImages.find(img => img.id === 'hero-camera');
+  const ctaImage = PlaceHolderImages.find(img => img.id === 'sustainable-living');
 
   const recentSwapsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -150,13 +152,15 @@ export default function Home() {
               </Link>
             </div>
             <div className="flex-1 relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-xl z-10">
-              <Image 
-                src="https://picsum.photos/seed/cta/800/600" 
-                alt="Community" 
-                fill 
-                className="object-cover grayscale"
-                data-ai-hint="sustainable living"
-              />
+              {ctaImage && (
+                <Image 
+                  src={ctaImage.imageUrl} 
+                  alt={ctaImage.description} 
+                  fill 
+                  className="object-cover grayscale"
+                  data-ai-hint={ctaImage.imageHint}
+                />
+              )}
             </div>
           </div>
         </div>
