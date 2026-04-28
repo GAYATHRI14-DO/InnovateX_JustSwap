@@ -47,7 +47,7 @@ export function Navbar() {
         
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group shrink-0">
-          <div className="bg-primary text-white p-2 rounded-xl">
+          <div className="bg-primary text-primary-foreground p-2 rounded-xl">
             <SwapLogo className="h-6 w-6" />
           </div>
           <span className="text-2xl font-bold hidden sm:block">JustSwap</span>
@@ -56,9 +56,9 @@ export function Navbar() {
         {/* Center */}
         <div className="flex-1 flex justify-center items-center gap-8 max-w-2xl">
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
-            <Link href="/">Home</Link>
-            <Link href="/about">About</Link>
-            <Link href="/how-it-works">Guide</Link>
+            <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+            <Link href="/about" className="hover:text-primary transition-colors">About</Link>
+            <Link href="/how-it-works" className="hover:text-primary transition-colors">Guide</Link>
           </div>
 
           <form onSubmit={handleSearch} className="relative w-full max-w-[200px] hidden lg:block">
@@ -66,7 +66,7 @@ export function Navbar() {
             <Input 
               type="search"
               placeholder="Search..." 
-              className="pl-9 h-9 rounded-xl"
+              className="pl-9 h-9 rounded-xl border-input bg-background"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -83,7 +83,7 @@ export function Navbar() {
         <div className="flex items-center gap-4">
 
           <Link href="/list-item" className="hidden sm:block">
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2 rounded-xl border-2">
               <PlusCircle className="h-4 w-4" />
               List Item
             </Button>
@@ -96,33 +96,33 @@ export function Navbar() {
                 <Button size="icon" variant="ghost" className="relative">
                   <Bell className="h-5 w-5" />
                   {notifications && notifications.length > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500 text-[10px] text-white">
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-primary text-[10px] text-primary-foreground">
                       {notifications.length}
                     </Badge>
                   )}
                 </Button>
               </PopoverTrigger>
 
-              <PopoverContent className="w-80 p-0">
-                <div className="p-4 bg-primary text-white">
-                  <h4>Notifications</h4>
-                  <p className="text-xs">
+              <PopoverContent className="w-80 p-0 rounded-2xl border-2 overflow-hidden">
+                <div className="p-4 bg-primary text-primary-foreground">
+                  <h4 className="font-bold">Notifications</h4>
+                  <p className="text-xs opacity-80">
                     {notifications?.length || 0} pending
                   </p>
                 </div>
 
-                <ScrollArea className="h-80">
+                <ScrollArea className="h-80 bg-background">
                   {isLoading ? (
-                    <div className="p-6 text-center">Loading...</div>
+                    <div className="p-6 text-center text-muted-foreground">Loading...</div>
                   ) : notifications?.length ? (
                     notifications.map((notif) => (
-                      <Link key={notif.id} href={`/proposals/${notif.id}`} className="block p-4">
-                        <p className="text-sm font-medium">New Swap Proposal</p>
-                        <p className="text-xs">{notif.message}</p>
+                      <Link key={notif.id} href={`/proposals/${notif.id}`} className="block p-4 hover:bg-muted transition-colors border-b last:border-0">
+                        <p className="text-sm font-bold">New Swap Proposal</p>
+                        <p className="text-xs text-muted-foreground">{notif.message}</p>
                       </Link>
                     ))
                   ) : (
-                    <div className="p-6 text-center">No notifications</div>
+                    <div className="p-6 text-center text-muted-foreground">No notifications</div>
                   )}
                 </ScrollArea>
               </PopoverContent>
@@ -131,18 +131,18 @@ export function Navbar() {
 
           {/* USER SECTION */}
           {isUserLoading ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
           ) : (
             <div className="flex items-center gap-2">
               {user ? (
                 <Link href="/dashboard">
-                  <Button variant="ghost" size="icon" title="Account">
+                  <Button variant="ghost" size="icon" title="Account" className="rounded-xl">
                     <User className="h-5 w-5" />
                   </Button>
                 </Link>
               ) : null}
               <Link href="/signup">
-                <Button className="gap-2">
+                <Button className="gap-2 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90">
                   <UserPlus className="h-4 w-4" />
                   Sign Up
                 </Button>
