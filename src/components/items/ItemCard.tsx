@@ -14,7 +14,8 @@ export function ItemCard({ item }: { item: Item }) {
             src={item.imageUrl}
             alt={item.title}
             fill
-            className="object-cover transition-transform group-hover:scale-105 grayscale"
+            className="object-cover transition-transform group-hover:scale-105"
+
             data-ai-hint={item.category.toLowerCase()}
           />
           <div className="absolute top-3 right-3">
