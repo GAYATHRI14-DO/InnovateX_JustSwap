@@ -50,9 +50,6 @@ service cloud.firestore {
     /**
      * @description Rules for managing individual user profiles.
      * @path /users/{userId}
-     * @allow (get/list/update) if auth.uid == userId. (create) if auth.uid matches path and data.id.
-     * @deny (create) if auth.uid != path userId. (update) if attempting to change the document ID.
-     * @principle Path-based ownership and relational integrity for private user data.
      */
     match /users/{userId} {
       allow get, list: if isOwner(userId);
@@ -64,9 +61,6 @@ service cloud.firestore {
     /**
      * @description Rules for accessing global item categories.
      * @path /categories/{categoryId}
-     * @allow (get/list) for everyone.
-     * @deny (create/update/delete) for all users; managed via administrative processes.
-     * @principle Public read access for static platform metadata.
      */
     match /categories/{categoryId} {
       allow get, list: if true;
@@ -76,9 +70,6 @@ service cloud.firestore {
     /**
      * @description Rules for items listed by users.
      * @path /users/{ownerId}/items/{itemId}
-     * @allow (get/list) if owner OR if item is 'Available'. (create/update/delete) if owner.
-     * @deny (create) if ownerId in data != path ownerId. (update) if changing ownerId.
-     * @principle Hierarchical ownership for writes with conditional public visibility for discovery.
      */
     match /users/{ownerId}/items/{itemId} {
       allow get: if isOwner(ownerId) || resource.data.status == 'Available';
@@ -90,8 +81,6 @@ service cloud.firestore {
 
     /**
      * @description Support for global item browsing across all users' subcollections.
-     * @path /{path=**}/items/{itemId}
-     * @allow (read) only if the item status is explicitly 'Available'.
      */
     match /{path=**}/items/{itemId} {
       allow read: if resource.data.status == 'Available';
@@ -100,13 +89,11 @@ service cloud.firestore {
     /**
      * @description Rules for managing swap proposals between two users.
      * @path /swapProposals/{swapProposalId}
-     * @allow (get/list/update) if user is proposer or target owner. (create) if user is proposer.
-     * @deny (update) if attempting to change the proposerId or targetItemOwnerId fields.
-     * @principle Shared access model using denormalized IDs to facilitate two-party interaction.
+     * @allow (get/list) if user is participant OR if proposal is 'Accepted' (public activity feed).
      */
     match /swapProposals/{swapProposalId} {
-      // Note: List access is governed by filters matching proposerId or targetItemOwnerId
-      allow get, list: if isParticipant(resource.data.proposerId, resource.data.targetItemOwnerId);
+      allow get, list: if isParticipant(resource.data.proposerId, resource.data.targetItemOwnerId)
+                       || (resource != null && resource.data.status == 'Accepted');
       
       allow create: if isSignedIn() 
                     && request.resource.data.proposerId == request.auth.uid;
