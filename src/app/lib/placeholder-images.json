@@ -8,6 +8,12 @@
       "imageHint": "vintage camera"
     },
     {
+      "id": "barter-small",
+      "description": "A focused shot of two people exchanging items during a swap",
+      "imageUrl": "https://picsum.photos/seed/barter-small/600/400",
+      "imageHint": "barter exchange"
+    },
+    {
       "id": "item-camera",
       "description": "Vintage film camera",
       "imageUrl": "https://picsum.photos/seed/swap1/600/400",

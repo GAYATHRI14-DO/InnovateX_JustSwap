@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -16,7 +17,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 export default function Home() {
   const firestore = useFirestore();
   const featuredItems = ITEMS.slice(0, 4);
-  const heroImage = PlaceHolderImages.find(img => img.id === 'hero-camera');
+  const heroImage = PlaceHolderImages.find(img => img.id === 'barter-small');
   const ctaImage = PlaceHolderImages.find(img => img.id === 'sustainable-living');
 
   const recentSwapsQuery = useMemoFirebase(() => {
