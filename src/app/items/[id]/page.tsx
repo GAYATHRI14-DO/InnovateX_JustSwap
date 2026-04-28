@@ -233,7 +233,7 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
             <div className="bg-primary/5 p-6 rounded-2xl border border-primary/20 space-y-3">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <ShieldCheck className="h-5 w-5" />
-                SwapIt Safe Exchange
+                Swap Safe Exchange
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 We recommend meeting in a public, well-lit place for the exchange. All users are verified for your security.

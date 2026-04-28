@@ -3,7 +3,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'SwapIt - Sustainable Item Exchange',
+  title: 'Swap - Sustainable Item Exchange',
   description: 'Exchange items with others instead of buying new ones. A community for bartering and sustainability.',
 };
 

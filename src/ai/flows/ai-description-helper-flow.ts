@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI agent that helps users generate or refine item descriptions for swap listings.
@@ -36,7 +37,7 @@ const generateDescriptionPrompt = ai.definePrompt({
   name: 'generateDescriptionPrompt',
   input: { schema: GenerateDescriptionInputSchema },
   output: { schema: GenerateDescriptionOutputSchema },
-  prompt: `You are an AI assistant specialized in creating appealing and informative item descriptions for a swap platform called "SwapIt".
+  prompt: `You are an AI assistant specialized in creating appealing and informative item descriptions for a swap platform called "Swap".
 
 Generate a detailed and attractive description for an item based on the following information. Highlight its best features, condition, and why someone might want to swap for it. The description should be engaging and concise.
 

@@ -7,6 +7,20 @@ import { Button } from '@/components/ui/button';
 import { ITEMS } from '@/lib/mock-data';
 import { ArrowRight, RefreshCw, ShieldCheck, Heart } from 'lucide-react';
 
+function SwapLogo({ className }: { className?: string }) {
+  return (
+    <svg 
+      viewBox="0 0 24 24" 
+      fill="currentColor" 
+      className={className} 
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M2.5 14C2.5 9 7 6 11 11C11 11 8 18 2.5 14Z" />
+      <path d="M21.5 10C21.5 15 17 18 13 13C13 13 16 6 21.5 10Z" />
+    </svg>
+  );
+}
+
 export default function Home() {
   const featuredItems = ITEMS.slice(0, 4);
 
@@ -26,7 +40,7 @@ export default function Home() {
                 Get what you <span className="text-primary italic underline decoration-accent">need</span> without paying money.
               </h1>
               <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
-                Exchange items with your neighbors. SwapIt helps you find new homes for your belongings while getting the things you want, sustainably.
+                Exchange items with your neighbors. Swap helps you find new homes for your belongings while getting the things you want, sustainably.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/browse">
@@ -54,7 +68,7 @@ export default function Home() {
             <div className="relative aspect-square lg:aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-1000">
               <Image 
                 src="https://picsum.photos/seed/swaphero/1200/800"
-                alt="SwapIt Hero"
+                alt="Swap Hero"
                 fill
                 className="object-cover"
                 data-ai-hint="community exchange"
@@ -66,7 +80,7 @@ export default function Home() {
                   <p className="text-sm font-bold text-primary">Recent Swap</p>
                   <p className="text-lg font-headline font-bold">Vintage Camera for Road Bike</p>
                 </div>
-                <RefreshCw className="h-8 w-8 text-accent" />
+                <SwapLogo className="h-8 w-8 text-accent" />
               </div>
             </div>
           </div>
@@ -141,9 +155,9 @@ export default function Home() {
             <div className="space-y-4">
               <Link href="/" className="flex items-center gap-2">
                 <div className="bg-primary text-white p-1 rounded-lg">
-                  <RefreshCw className="h-5 w-5" />
+                  <SwapLogo className="h-6 w-6" />
                 </div>
-                <span className="text-xl font-headline font-bold tracking-tight text-primary">SwapIt</span>
+                <span className="text-xl font-headline font-bold tracking-tight text-primary">Swap</span>
               </Link>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 The world's friendliest platform for bartering and item exchange. Built for community, sustainability, and saving.
@@ -175,7 +189,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t text-center text-sm text-muted-foreground">
-            © {new Date().getFullYear()} SwapIt. All rights reserved.
+            © {new Date().getFullYear()} Swap. All rights reserved.
           </div>
         </div>
       </footer>
