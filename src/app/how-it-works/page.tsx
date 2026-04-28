@@ -40,11 +40,11 @@ export default function HowItWorksPage() {
               </p>
               <div className="relative max-w-3xl mx-auto aspect-[16/9] rounded-[2rem] overflow-hidden shadow-xl border bg-muted">
                 <Image 
-                  src="https://picsum.photos/seed/barter-cartoon/1200/800" 
+                  src="https://picsum.photos/seed/barter/1200/800" 
                   alt="Barter item exchange illustration" 
                   fill 
                   className="object-cover" 
-                  data-ai-hint="swap cartoon"
+                  data-ai-hint="barter exchange"
                 />
               </div>
             </div>
@@ -116,7 +116,7 @@ export default function HowItWorksPage() {
                 </Button>
               </Link>
               <Link href="/browse">
-                <Button size="lg" variant="outline" className="h-14 px-10 rounded-2xl font-bold text-lg border-2">
+                <Button size="lg" variant="outline" className="h-14 px-10 rounded-2xl font-bold text-lg border-2 border-black/10">
                   Browse Listings
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>

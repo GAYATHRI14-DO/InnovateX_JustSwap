@@ -45,9 +45,9 @@
     },
     {
       "id": "swapping-illustration",
-      "description": "Barter and item exchange cartoon illustration",
-      "imageUrl": "https://picsum.photos/seed/barter-cartoon/1200/800",
-      "imageHint": "swap cartoon"
+      "description": "Barter and item exchange illustration",
+      "imageUrl": "https://picsum.photos/seed/barter/1200/800",
+      "imageHint": "barter exchange"
     }
   ]
 }
