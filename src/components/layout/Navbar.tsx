@@ -37,7 +37,6 @@ export function Navbar() {
         {/* Center Section: Nav Links and Search Toggle */}
         <div className="flex-1 flex justify-center items-center gap-8 max-w-2xl">
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium shrink-0">
-            <Link href="/how-it-works" className="transition-colors hover:text-primary">How it Works</Link>
             <Link href="/" className="transition-colors hover:text-primary">Home</Link>
             <Link href="/about" className="transition-colors hover:text-primary">About</Link>
           </div>
@@ -62,7 +61,11 @@ export function Navbar() {
         </div>
 
         {/* Right Section: Actions */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-4 shrink-0">
+          <Link href="/how-it-works" className="hidden md:block transition-colors hover:text-primary text-sm font-medium">
+            How it Works
+          </Link>
+          
           <Link href="/list-item" className="hidden sm:block">
             <Button variant="outline" className="gap-2 border-primary text-primary hover:bg-primary/5 rounded-xl">
               <PlusCircle className="h-4 w-4" />
