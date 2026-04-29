@@ -8,16 +8,27 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { SwapLogo } from '@/components/layout/SwapLogo';
 import { Badge } from '@/components/ui/badge';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { collection, query, limit } from 'firebase/firestore';
+import { ITEMS } from '@/lib/mock-data';
+import { ItemCard } from '@/components/items/ItemCard';
 
 export default function ExplorePage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const heroImage = PlaceHolderImages.find(img => img.id === 'item-camera');
   const ctaImage = PlaceHolderImages.find(img => img.id === 'community-collaboration');
+
+  const firestore = useFirestore();
+  const itemsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'items'), limit(4));
+  }, [firestore]);
+
+  const { data: firestoreItems, isLoading: isItemsLoading } = useCollection(itemsQuery);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -32,6 +43,11 @@ export default function ExplorePage() {
       </div>
     );
   }
+
+  const firestoreList = firestoreItems || [];
+  const combinedItems = [...firestoreList, ...ITEMS];
+  const uniqueItems = Array.from(new Map(combinedItems.map(item => [item.id, item])).values());
+  const featuredItems = uniqueItems.filter(item => user && item.ownerId !== user.uid).slice(0, 4);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -79,6 +95,37 @@ export default function ExplorePage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Items Section */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div className="space-y-4">
+              <h2 className="text-4xl font-headline font-bold">Featured Items</h2>
+              <p className="text-muted-foreground text-lg max-w-xl">
+                Discover items available in your community right now. From electronics to books, everything is up for trade.
+              </p>
+            </div>
+            <Link href="/browse">
+              <Button variant="ghost" className="font-bold gap-2 text-primary hover:bg-primary/5">
+                View all items
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {featuredItems.map(item => (
+              <ItemCard key={item.id} item={{
+                ...item,
+                imageUrl: item.imageUrls?.[0] || item.imageUrl || `https://picsum.photos/seed/${item.id}/600/400`,
+                ownerName: item.ownerName || 'Community Member',
+                createdAt: item.listedDate || item.createdAt
+              }} />
+            ))}
           </div>
         </div>
       </section>
