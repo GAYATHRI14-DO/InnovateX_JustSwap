@@ -15,17 +15,19 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { Camera, ChevronLeft, X, MapPin } from 'lucide-react';
+import { Camera, ChevronLeft, X, MapPin, Sparkles, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
-import { useFirestore } from '@/firebase';
+import { useFirestore, useUser } from '@/firebase';
 import { collection, doc, setDoc } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
+import { generateDescription } from '@/ai/flows/ai-description-helper-flow';
 
 export default function ListItemPage() {
+  const { user } = useUser();
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [condition, setCondition] = useState('');
@@ -33,26 +35,25 @@ export default function ListItemPage() {
   const [location, setLocation] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAiLoading, setIsAiLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { toast } = useToast();
   const db = useFirestore();
 
-  const demoUserId = 'demo-user-123';
-
   const handleListingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!db) return;
+    if (!db || !user) return;
 
     setIsSubmitting(true);
 
     const globalItemRef = doc(collection(db, 'items'));
     const itemId = globalItemRef.id;
-    const userItemRef = doc(db, 'users', demoUserId, 'items', itemId);
+    const userItemRef = doc(db, 'users', user.uid, 'items', itemId);
 
     const itemData = {
       id: itemId,
-      ownerId: demoUserId,
+      ownerId: user.uid,
       title,
       description,
       condition,
@@ -64,34 +65,44 @@ export default function ListItemPage() {
       viewCount: 0,
     };
 
-    try {
-      setDoc(globalItemRef, itemData).catch((err) => {
-        errorEmitter.emit('permission-error', new FirestorePermissionError({
-          path: globalItemRef.path,
-          operation: 'create',
-          requestResourceData: itemData,
-        }));
-      });
-
-      setDoc(userItemRef, itemData).catch((err) => {
-        errorEmitter.emit('permission-error', new FirestorePermissionError({
-          path: userItemRef.path,
-          operation: 'create',
-          requestResourceData: itemData,
-        }));
-      });
-
+    // We use setDoc here to ensure both global and private records match
+    Promise.all([
+      setDoc(globalItemRef, itemData),
+      setDoc(userItemRef, itemData)
+    ]).then(() => {
       toast({
         title: "Item Listed!",
         description: "Your item is now live and visible to the community.",
       });
-
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 500);
-    } catch (error) {
-      console.error("Error saving listing:", error);
+      router.push('/dashboard');
+    }).catch((err) => {
+      console.error("Error saving listing:", err);
+      errorEmitter.emit('permission-error', new FirestorePermissionError({
+        path: globalItemRef.path,
+        operation: 'create',
+        requestResourceData: itemData,
+      }));
       setIsSubmitting(false);
+    });
+  };
+
+  const handleAiRefine = async () => {
+    if (!title) {
+      toast({ title: "Title Required", description: "Please enter a title to use AI refinement.", variant: "destructive" });
+      return;
+    }
+    setIsAiLoading(true);
+    try {
+      const result = await generateDescription({
+        itemTitle: title,
+        category: category || 'General',
+        keywords: [condition, location].filter(Boolean)
+      });
+      setDescription(result.description);
+    } catch (err) {
+      toast({ title: "AI Assistant Busy", description: "Could not generate description. Please try again.", variant: "destructive" });
+    } finally {
+      setIsAiLoading(false);
     }
   };
 
@@ -112,15 +123,11 @@ export default function ListItemPage() {
     setImages(prev => prev.filter((_, i) => i !== index));
   };
 
-  const triggerFileInput = () => {
-    fileInputRef.current?.click();
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       <main className="flex-1 container max-w-4xl mx-auto px-4 py-8">
-        <Link href="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-8 transition-colors">
+        <Link href="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-black mb-8 transition-colors">
           <ChevronLeft className="h-4 w-4" />
           Back to home
         </Link>
@@ -132,7 +139,7 @@ export default function ListItemPage() {
               <p className="text-muted-foreground">Share what you have and let the community know what you need in return.</p>
             </div>
 
-            <Card className="rounded-2xl border-2 shadow-sm">
+            <Card className="rounded-2xl border-2 shadow-sm bg-white">
               <CardContent className="p-8">
                 <form onSubmit={handleListingSubmit} className="space-y-6">
                   <div className="space-y-2">
@@ -197,7 +204,20 @@ export default function ListItemPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="description">Description</Label>
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={handleAiRefine}
+                        disabled={isAiLoading}
+                        className="text-xs gap-1 text-primary hover:text-primary hover:bg-primary/5"
+                      >
+                        {isAiLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                        AI Refine
+                      </Button>
+                    </div>
                     <Textarea 
                       id="description" 
                       placeholder="Tell us more about the item..." 
@@ -233,7 +253,7 @@ export default function ListItemPage() {
                       ))}
                       {images.length < 8 && (
                         <div 
-                          onClick={triggerFileInput}
+                          onClick={() => fileInputRef.current?.click()}
                           className="aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-muted/50 transition-colors"
                         >
                           <Camera className="h-8 w-8 text-muted-foreground" />
@@ -248,6 +268,7 @@ export default function ListItemPage() {
                     className="w-full h-14 text-lg font-bold rounded-2xl bg-black text-white hover:bg-black/90"
                     disabled={isSubmitting}
                   >
+                    {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : null}
                     {isSubmitting ? "Listing Item..." : "Publish Listing"}
                   </Button>
                 </form>
@@ -261,12 +282,16 @@ export default function ListItemPage() {
                 <h3 className="font-headline font-bold">Listing Tips</h3>
                 <ul className="text-sm space-y-3 text-muted-foreground">
                   <li className="flex gap-2">
-                    <span className="text-primary font-bold">•</span>
+                    <span className="text-black font-bold">•</span>
                     Be honest about the condition to build trust.
                   </li>
                   <li className="flex gap-2">
-                    <span className="text-primary font-bold">•</span>
+                    <span className="text-black font-bold">•</span>
                     Upload clear photos from multiple angles.
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-black font-bold">•</span>
+                    Use AI Refine to make your description stand out.
                   </li>
                 </ul>
               </div>

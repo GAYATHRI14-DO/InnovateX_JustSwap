@@ -12,42 +12,43 @@ import {
   Package, 
   RefreshCw, 
   Settings, 
-  ChevronRight, 
   Clock, 
   Loader2,
-  Inbox
+  Inbox,
+  UserPlus
 } from 'lucide-react';
 import Link from 'next/link';
-import { useFirestore, useDoc, useMemoFirebase, useCollection, updateDocumentNonBlocking } from '@/firebase';
-import { doc, collection } from 'firebase/firestore';
+import { useFirestore, useDoc, useMemoFirebase, useCollection, updateDocumentNonBlocking, useUser } from '@/firebase';
+import { doc, collection, query, where } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 export default function DashboardPage() {
+  const { user, isUserLoading: isAuthLoading } = useUser();
   const firestore = useFirestore();
   const { toast } = useToast();
 
-  // For a purely public demo, we'll use a hardcoded demo user ID
-  const demoUserId = 'demo-user-123';
-
   const userDocRef = useMemoFirebase(() => {
-    if (!firestore) return null;
-    return doc(firestore, 'users', demoUserId);
-  }, [firestore]);
+    if (!firestore || !user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
 
   const { data: profile, isLoading: isProfileLoading } = useDoc(userDocRef);
 
   // My Listings
   const myListingsQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
-    return collection(firestore, 'users', demoUserId, 'items');
-  }, [firestore]);
+    if (!firestore || !user) return null;
+    return collection(firestore, 'users', user.uid, 'items');
+  }, [firestore, user]);
   const { data: myListings, isLoading: isListingsLoading } = useCollection(myListingsQuery);
 
-  // Incoming Proposals
+  // Incoming Proposals (Where the current user is the receiver)
   const incomingProposalsQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
-    return collection(firestore, 'swapProposals');
-  }, [firestore]);
+    if (!firestore || !user) return null;
+    return query(
+      collection(firestore, 'swapProposals'),
+      where('receiverId', '==', user.uid)
+    );
+  }, [firestore, user]);
   const { data: incomingProposals, isLoading: isIncomingLoading } = useCollection(incomingProposalsQuery);
 
   const handleUpdateStatus = (proposalId: string, newStatus: 'Accepted' | 'Declined') => {
@@ -55,7 +56,7 @@ export default function DashboardPage() {
     const ref = doc(firestore, 'swapProposals', proposalId);
     updateDocumentNonBlocking(ref, { 
       status: newStatus,
-      responseDate: new Date().toISOString()
+      acceptanceDate: new Date().toISOString()
     });
     toast({
       title: `Proposal ${newStatus}`,
@@ -63,7 +64,7 @@ export default function DashboardPage() {
     });
   };
 
-  if (isProfileLoading) {
+  if (isAuthLoading || isProfileLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -71,11 +72,11 @@ export default function DashboardPage() {
     );
   }
 
-  const displayName = profile?.firstName ? `${profile.firstName} ${profile.lastName}` : "Community Member";
-  const userEmail = "community@justswap.io";
-  const userAvatar = `https://picsum.photos/seed/demo-user/200/200`;
+  const isGuest = user?.isAnonymous;
+  const displayName = profile?.username || (isGuest ? "Guest User" : user?.email?.split('@')[0]) || "Member";
+  const userAvatar = profile?.profilePictureUrl || `https://picsum.photos/seed/${user?.uid}/200/200`;
 
-  const pendingIncoming = incomingProposals?.filter(p => p.status === 'Pending') || [];
+  const pendingIncoming = incomingProposals?.filter(p => p.status === 'pending') || [];
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -85,7 +86,7 @@ export default function DashboardPage() {
           
           {/* Sidebar / Profile Card */}
           <div className="lg:w-1/4 space-y-6">
-            <Card className="rounded-3xl border shadow-sm overflow-hidden">
+            <Card className="rounded-3xl border shadow-sm overflow-hidden bg-white">
               <CardContent className="p-6 text-center space-y-4">
                 <Avatar className="h-24 w-24 mx-auto border-4 border-white shadow-lg">
                   <AvatarImage src={userAvatar} />
@@ -93,27 +94,40 @@ export default function DashboardPage() {
                 </Avatar>
                 <div>
                   <h2 className="text-2xl font-headline font-bold">{displayName}</h2>
-                  <p className="text-sm text-muted-foreground">{userEmail}</p>
+                  <p className="text-sm text-muted-foreground">{isGuest ? "Browsing as Guest" : user?.email}</p>
                 </div>
-                <div className="pt-4 space-y-2">
-                  <Link href="/profile/edit" className="block w-full">
-                    <Button variant="outline" className="w-full justify-start gap-2 rounded-xl">
-                      <Settings className="h-4 w-4" />
-                      Edit Profile
-                    </Button>
-                  </Link>
-                </div>
+                
+                {isGuest ? (
+                  <div className="pt-4 p-4 bg-primary/5 rounded-2xl border border-primary/10 space-y-3">
+                    <p className="text-xs text-muted-foreground">Sign up to unlock persistent listings and verified swapping.</p>
+                    <Link href="/login" className="block">
+                      <Button className="w-full gap-2 rounded-xl bg-black text-white">
+                        <UserPlus className="h-4 w-4" />
+                        Create Account
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="pt-4 space-y-2">
+                    <Link href="/profile/edit" className="block w-full">
+                      <Button variant="outline" className="w-full justify-start gap-2 rounded-xl">
+                        <Settings className="h-4 w-4" />
+                        Edit Profile
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
-            <Card className="rounded-3xl border shadow-sm">
+            <Card className="rounded-3xl border shadow-sm bg-white">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg font-headline">Swap Stats</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Successful Swaps</span>
-                  <span className="font-bold">{incomingProposals?.filter(p => p.status === 'Accepted').length || 0}</span>
+                  <span className="font-bold">{incomingProposals?.filter(p => p.status === 'accepted').length || 0}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Active Listings</span>
@@ -127,10 +141,10 @@ export default function DashboardPage() {
           <div className="lg:w-3/4">
             <Tabs defaultValue="proposals" className="space-y-8">
               <TabsList className="bg-white border p-1 rounded-2xl w-full md:w-auto h-auto grid grid-cols-2 md:inline-flex">
-                <TabsTrigger value="proposals" className="rounded-xl py-3 px-8 font-bold data-[state=active]:bg-primary data-[state=active]:text-white">
+                <TabsTrigger value="proposals" className="rounded-xl py-3 px-8 font-bold data-[state=active]:bg-black data-[state=active]:text-white">
                   Swap Proposals
                 </TabsTrigger>
-                <TabsTrigger value="listings" className="rounded-xl py-3 px-8 font-bold data-[state=active]:bg-primary data-[state=active]:text-white">
+                <TabsTrigger value="listings" className="rounded-xl py-3 px-8 font-bold data-[state=active]:bg-black data-[state=active]:text-white">
                   My Listings
                 </TabsTrigger>
               </TabsList>
@@ -139,7 +153,7 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 gap-4">
                   <h3 className="text-xl font-headline font-bold flex items-center gap-2">
                     <RefreshCw className="h-5 w-5 text-primary" />
-                    Community Proposals
+                    Pending Proposals
                   </h3>
                   
                   {isIncomingLoading ? (
@@ -158,7 +172,7 @@ export default function DashboardPage() {
                             <div className="flex gap-2 w-full md:w-auto">
                               <Button 
                                 onClick={() => handleUpdateStatus(proposal.id, 'Accepted')}
-                                className="bg-primary rounded-xl flex-1 md:flex-none text-white"
+                                className="bg-black rounded-xl flex-1 md:flex-none text-white"
                               >
                                 Accept
                               </Button>
@@ -176,7 +190,7 @@ export default function DashboardPage() {
                               <Clock className="h-3 w-3" />
                               Received {new Date(proposal.proposalDate).toLocaleDateString()}
                             </div>
-                            <Link href={`/proposals/${proposal.id}`} className="text-primary font-bold hover:underline">View Details</Link>
+                            <Link href={`/proposals/${proposal.id}`} className="text-black font-bold hover:underline">View Details</Link>
                           </div>
                         </CardContent>
                       </Card>
@@ -197,7 +211,7 @@ export default function DashboardPage() {
                     Listed Items ({myListings?.length || 0})
                   </h3>
                   <Link href="/list-item">
-                    <Button variant="outline" className="rounded-xl border-primary text-primary hover:bg-primary/5">
+                    <Button variant="outline" className="rounded-xl border-black text-black hover:bg-black/5">
                       + Add New Listing
                     </Button>
                   </Link>
@@ -216,7 +230,7 @@ export default function DashboardPage() {
                           createdAt: item.listedDate
                         }} />
                         <div className="absolute top-4 left-4">
-                           <Badge className="bg-white/90 text-primary border-none shadow-sm">My Item</Badge>
+                           <Badge className="bg-white/90 text-black border-none shadow-sm">My Item</Badge>
                         </div>
                       </div>
                     ))
