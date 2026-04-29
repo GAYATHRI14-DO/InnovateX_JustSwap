@@ -36,11 +36,16 @@ export default function ExplorePage() {
 
   const { data: firestoreItems, isLoading } = useCollection(featuredItemsQuery);
 
-  // Filter out current user's items and prioritize Firestore data, fallback to mock data if empty
-  const communityItems = (firestoreItems || []).filter(item => item.ownerId !== user?.uid);
-  const displayedItems = communityItems.length > 0 
-    ? communityItems.slice(0, 8) 
-    : ITEMS.filter(item => item.ownerId !== user?.uid).slice(0, 4);
+  // Combine live items with featured community items
+  const firestoreList = firestoreItems || [];
+  const combinedItems = [...firestoreList, ...ITEMS];
+  
+  // De-duplicate by ID and filter out the current user's items
+  const uniqueItems = Array.from(new Map(combinedItems.map(item => [item.id, item])).values());
+  const communityItems = uniqueItems.filter(item => item.ownerId !== user?.uid);
+  
+  // Display only the first few items for the featured section
+  const displayedItems = communityItems.slice(0, 8);
 
   if (isUserLoading || !user) {
     return (

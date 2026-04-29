@@ -40,12 +40,14 @@ export default function BrowsePage() {
 
   const { data: firestoreItems, isLoading } = useCollection(itemsQuery);
 
-  // Combine real items with mock items as fallback, ensuring current user's items are always hidden
-  const allAvailableItems = firestoreItems && firestoreItems.length > 0 
-    ? firestoreItems 
-    : ITEMS;
+  // Merge real items with community items for a populated feel
+  const firestoreList = firestoreItems || [];
+  const combinedItems = [...firestoreList, ...ITEMS];
+  
+  // De-duplicate items by ID
+  const uniqueItems = Array.from(new Map(combinedItems.map(item => [item.id, item])).values());
 
-  const filteredItems = allAvailableItems.filter(item => {
+  const filteredItems = uniqueItems.filter(item => {
     // Hide current user's items from their own browse feed
     if (user && item.ownerId === user.uid) return false;
 
