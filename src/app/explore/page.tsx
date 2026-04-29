@@ -103,16 +103,16 @@ export default function ExplorePage() {
       {/* Featured Items Section */}
       <section className="py-24 bg-white">
         <div className="container mx-auto px-4">
-          <div className="mb-16">
+          <div className="mb-16 text-center max-w-2xl mx-auto">
             <div className="space-y-4">
               <h2 className="text-4xl font-headline font-bold">Featured Items</h2>
-              <p className="text-muted-foreground text-lg max-w-xl">
+              <p className="text-muted-foreground text-lg">
                 Discover items available in your community right now. From electronics to books, everything is up for trade.
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {featuredItems.map(item => (
               <ItemCard key={item.id} item={{
                 ...item,
@@ -123,9 +123,9 @@ export default function ExplorePage() {
             ))}
           </div>
 
-          <div className="mt-12">
+          <div className="mt-12 flex justify-center">
             <Link href="/browse">
-              <Button variant="ghost" className="font-bold gap-2 text-primary hover:bg-primary/5 p-0">
+              <Button variant="ghost" className="font-bold gap-2 text-primary hover:bg-primary/5 px-6 rounded-xl">
                 View all items
                 <ArrowRight className="h-4 w-4" />
               </Button>
