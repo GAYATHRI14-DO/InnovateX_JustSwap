@@ -3,68 +3,68 @@
   "placeholderImages": [
     {
       "id": "hero-camera",
-      "description": "Professional high-end camera",
-      "imageUrl": "https://picsum.photos/seed/pro-cam/1200/800",
+      "description": "Professional high-end camera on a clean background",
+      "imageUrl": "https://picsum.photos/seed/pro-cam-99/1200/800",
       "imageHint": "professional camera"
     },
     {
       "id": "barter-small",
-      "description": "Clean minimal exchange of items",
-      "imageUrl": "https://picsum.photos/seed/minimal-swap/600/400",
+      "description": "Clean minimal exchange of items between two hands",
+      "imageUrl": "https://picsum.photos/seed/minimal-swap-88/600/400",
       "imageHint": "minimal exchange"
     },
     {
       "id": "item-camera",
-      "description": "Sleek professional DSLR camera",
-      "imageUrl": "https://picsum.photos/seed/tech-camera/1200/800",
+      "description": "Sleek professional DSLR camera with lens",
+      "imageUrl": "https://picsum.photos/seed/tech-camera-77/1200/800",
       "imageHint": "tech camera"
     },
     {
       "id": "item-dress",
-      "description": "High-quality designer dress",
-      "imageUrl": "https://picsum.photos/seed/fashion-dress/800/1200",
+      "description": "High-quality designer dress on a mannequin",
+      "imageUrl": "https://picsum.photos/seed/fashion-dress-66/800/1200",
       "imageHint": "designer dress"
     },
     {
       "id": "item-headphones",
-      "description": "Studio quality wireless headphones",
-      "imageUrl": "https://picsum.photos/seed/studio-audio/800/800",
+      "description": "Studio quality wireless headphones in black",
+      "imageUrl": "https://picsum.photos/seed/studio-audio-55/800/800",
       "imageHint": "studio headphones"
     },
     {
       "id": "item-pot",
-      "description": "Minimalist ceramic planter",
-      "imageUrl": "https://picsum.photos/seed/decor-pot/800/800",
+      "description": "Minimalist ceramic planter with a small plant",
+      "imageUrl": "https://picsum.photos/seed/decor-pot-44/800/800",
       "imageHint": "minimalist planter"
     },
     {
       "id": "item-watch",
-      "description": "Luxury minimalist timepiece",
-      "imageUrl": "https://picsum.photos/seed/luxury-watch/800/800",
+      "description": "Luxury minimalist timepiece with a leather strap",
+      "imageUrl": "https://picsum.photos/seed/luxury-watch-33/800/800",
       "imageHint": "luxury watch"
     },
     {
       "id": "item-speaker",
-      "description": "Modern smart home speaker",
-      "imageUrl": "https://picsum.photos/seed/smart-audio/600/400",
+      "description": "Modern smart home speaker in grey",
+      "imageUrl": "https://picsum.photos/seed/smart-audio-22/600/400",
       "imageHint": "smart speaker"
     },
     {
       "id": "barter-hero",
-      "description": "Clean, bright community trading scene",
-      "imageUrl": "https://picsum.photos/seed/community-hero/1200/800",
+      "description": "Clean, bright community trading scene with people talking",
+      "imageUrl": "https://picsum.photos/seed/community-hero-11/1200/800",
       "imageHint": "community trade"
     },
     {
       "id": "sustainable-living",
-      "description": "Modern eco-friendly lifestyle",
-      "imageUrl": "https://picsum.photos/seed/eco-lifestyle/800/600",
+      "description": "Modern eco-friendly lifestyle with sustainable products",
+      "imageUrl": "https://picsum.photos/seed/eco-lifestyle-00/800/600",
       "imageHint": "eco lifestyle"
     },
     {
       "id": "community-collaboration",
-      "description": "Professional collaborative workspace",
-      "imageUrl": "https://picsum.photos/seed/pro-collab/800/800",
+      "description": "Professional collaborative workspace with people working together",
+      "imageUrl": "https://picsum.photos/seed/pro-collab-123/800/800",
       "imageHint": "professional collaboration"
     }
   ]
