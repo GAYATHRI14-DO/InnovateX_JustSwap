@@ -8,6 +8,12 @@
       "imageHint": "professional camera"
     },
     {
+      "id": "starry-night",
+      "description": "A deep dark night sky full of stars",
+      "imageUrl": "https://picsum.photos/seed/night-stars-777/1200/800",
+      "imageHint": "starry night"
+    },
+    {
       "id": "barter-small",
       "description": "Clean minimal exchange of items between two hands",
       "imageUrl": "https://picsum.photos/seed/minimal-swap-88/600/400",
