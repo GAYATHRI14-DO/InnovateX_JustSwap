@@ -58,7 +58,7 @@ export default function ExplorePage() {
       <section className="relative overflow-hidden bg-white pt-16 pb-20 lg:pt-24 lg:pb-32 border-b">
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 items-center">
-            <div className="space-y-8 animate-in fade-in slide-in-from-left duration-700">
+            <div className="space-y-8 animate-in fade-in slide-in-from-left duration-700 lg:-ml-12">
               <Badge variant="outline" className="px-4 py-1 text-black border-black/20 bg-black/5 rounded-full font-semibold uppercase tracking-widest text-[10px]">
                 Bartering Reimagined
               </Badge>
