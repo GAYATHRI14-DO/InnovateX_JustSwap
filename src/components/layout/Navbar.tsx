@@ -38,24 +38,24 @@ export function Navbar() {
     );
   }, [firestore, user]);
 
-  const { data: notifications, isLoading } = useCollection(incomingProposalsQuery);
+  const { data: notifications, isLoading: isNotifsLoading } = useCollection(incomingProposalsQuery);
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-white px-4 py-3">
       <div className="container mx-auto flex items-center justify-between gap-4">
         
         <Link href="/" className="flex items-center gap-2 group shrink-0">
-          <div className="bg-primary text-primary-foreground p-2 rounded-xl">
+          <div className="bg-black text-white p-2 rounded-xl">
             <SwapLogo className="h-6 w-6" />
           </div>
-          <span className="text-2xl font-bold hidden sm:block">SwapIt</span>
+          <span className="text-2xl font-bold hidden sm:block">justSwap</span>
         </Link>
 
         <div className="flex-1 flex justify-center items-center gap-8 max-w-2xl">
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
-            <Link href="/explore" className="hover:text-primary transition-colors">Explore</Link>
-            <Link href="/about" className="hover:text-primary transition-colors">About</Link>
-            <Link href="/items/how-it-works" className="hover:text-primary transition-colors">Guide</Link>
+            <Link href="/explore" className="hover:text-black transition-colors">Explore</Link>
+            <Link href="/about" className="hover:text-black transition-colors">About</Link>
+            <Link href="/items/how-it-works" className="hover:text-black transition-colors">Guide</Link>
           </div>
 
           <form onSubmit={handleSearch} className="relative w-full max-w-[200px] hidden lg:block">
@@ -63,7 +63,7 @@ export function Navbar() {
             <Input 
               type="search"
               placeholder="Search..." 
-              className="pl-9 h-9 rounded-xl border-primary/10 bg-background"
+              className="pl-9 h-9 rounded-xl border-black/10 bg-background"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -72,10 +72,7 @@ export function Navbar() {
 
         <div className="flex items-center gap-4">
           <Link href="/list-item" className="hidden sm:block">
-            <Button variant="outline" className="gap-2 rounded-xl border-2 border-primary/10 hover:border-primary transition-all">
-              <PlusCircle className="h-4 w-4" />
-              List Item
-            </Button>
+            <PlusCircle className="h-6 w-6 text-muted-foreground hover:text-black transition-colors" />
           </Link>
 
           {user && (
@@ -84,19 +81,19 @@ export function Navbar() {
                 <Button size="icon" variant="ghost" className="relative">
                   <Bell className="h-5 w-5" />
                   {notifications && notifications.length > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-primary text-[10px] text-primary-foreground">
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-black text-[10px] text-white">
                       {notifications.length}
                     </Badge>
                   )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-80 p-0 rounded-2xl border-2 overflow-hidden shadow-xl">
-                <div className="p-4 bg-primary text-primary-foreground">
+                <div className="p-4 bg-black text-white">
                   <h4 className="font-bold">Notifications</h4>
                   <p className="text-xs opacity-80">{notifications?.length || 0} pending</p>
                 </div>
                 <ScrollArea className="h-80 bg-background">
-                  {isLoading ? (
+                  {isNotifsLoading ? (
                     <div className="p-6 text-center text-muted-foreground">Loading...</div>
                   ) : notifications?.length ? (
                     notifications.map((notif) => (
@@ -127,14 +124,14 @@ export function Navbar() {
                     </Button>
                   </Link>
                   <Link href="/signup">
-                    <Button className="rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-md">
+                    <Button className="rounded-xl font-bold bg-black text-white hover:bg-black/90 shadow-md">
                       Sign Up
                     </Button>
                   </Link>
                 </>
               ) : (
                 <Link href="/dashboard">
-                  <Button variant="ghost" size="icon" className="rounded-xl border border-transparent hover:border-primary/10">
+                  <Button variant="ghost" size="icon" className="rounded-xl border border-transparent hover:border-black/10">
                     <UserCircle className="h-6 w-6" />
                   </Button>
                 </Link>
