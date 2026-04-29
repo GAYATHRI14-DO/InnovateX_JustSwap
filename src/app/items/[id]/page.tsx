@@ -1,7 +1,7 @@
 
 "use client";
 
-import { use, useState } from 'react';
+import { use, useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
@@ -18,18 +18,38 @@ import {
 } from '@/components/ui/dialog';
 import { Card, CardContent } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ITEMS, MY_ITEMS, CURRENT_USER } from '@/lib/mock-data';
-import { MapPin, Calendar, User, RefreshCw, ChevronLeft, ShieldCheck, Heart } from 'lucide-react';
+import { ITEMS, MY_ITEMS } from '@/lib/mock-data';
+import { MapPin, Calendar, User, RefreshCw, ChevronLeft, ShieldCheck, Heart, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/firebase';
 
 export default function ItemDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+  const { toast } = useToast();
+  
   const item = ITEMS.find(i => i.id === id);
   const [selectedOfferItems, setSelectedOfferItems] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
-  const router = useRouter();
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push("/login");
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-10 w-10 animate-spin text-black" />
+          <p className="text-sm font-medium animate-pulse text-muted-foreground">Verifying access...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!item) {
     return (

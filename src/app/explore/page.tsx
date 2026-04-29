@@ -32,14 +32,17 @@ export default function ExplorePage() {
 
   useEffect(() => {
     if (!isUserLoading && !user) {
-      router.push("/");
+      router.push("/login");
     }
   }, [user, isUserLoading, router]);
 
   if (isUserLoading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-10 w-10 animate-spin text-black" />
+          <p className="text-sm font-medium animate-pulse text-muted-foreground">Verifying access...</p>
+        </div>
       </div>
     );
   }

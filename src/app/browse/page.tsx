@@ -28,7 +28,7 @@ export default function BrowsePage() {
 
   useEffect(() => {
     if (!isUserLoading && !user) {
-      router.push("/");
+      router.push("/login");
     }
   }, [user, isUserLoading, router]);
 
@@ -39,6 +39,17 @@ export default function BrowsePage() {
   }, [firestore]);
 
   const { data: firestoreItems, isLoading } = useCollection(itemsQuery);
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-10 w-10 animate-spin text-black" />
+          <p className="text-sm font-medium animate-pulse text-muted-foreground">Verifying access...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Merge real items with community items for a populated feel
   const firestoreList = firestoreItems || [];
@@ -57,14 +68,6 @@ export default function BrowsePage() {
     const matchesCondition = condition === 'all' || item.condition === condition;
     return matchesSearch && matchesCategory && matchesCondition;
   });
-
-  if (isUserLoading || !user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col">
