@@ -54,9 +54,9 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
   if (!item) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <h1 className="text-2xl font-bold mb-4">Item not found</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">Listing not found</h1>
         <Link href="/browse">
-          <Button>Back to browse</Button>
+          <Button variant="outline" className="rounded-xl">Back to browse</Button>
         </Link>
       </div>
     );
@@ -101,6 +101,8 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
     );
   };
 
+  const isGuest = user?.isAnonymous;
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
@@ -113,7 +115,7 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left Column: Image Gallery */}
           <div className="space-y-6">
-            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-lg border bg-white">
+            <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-2xl border bg-white">
               <Image 
                 src={item.imageUrl} 
                 alt={item.title} 
@@ -124,7 +126,7 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
             </div>
             <div className="grid grid-cols-4 gap-4">
               {[1, 2, 3, 4].map(i => (
-                <div key={i} className="aspect-square rounded-xl overflow-hidden border bg-muted cursor-pointer hover:border-primary transition-all">
+                <div key={i} className="aspect-square rounded-2xl overflow-hidden border bg-muted cursor-pointer hover:border-primary transition-all">
                    <Image 
                     src={`https://picsum.photos/seed/${item.id + i}/200/200`} 
                     alt="Thumbnail" 
@@ -149,7 +151,7 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
                   Listed on {item.createdAt}
                 </div>
               </div>
-              <h1 className="text-4xl font-headline font-bold text-foreground leading-tight">
+              <h1 className="text-4xl lg:text-5xl font-headline font-bold text-foreground leading-tight">
                 {item.title}
               </h1>
               <div className="flex items-center gap-6">
@@ -165,7 +167,7 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
               </div>
             </div>
 
-            <Card className="rounded-2xl border bg-white shadow-sm overflow-hidden">
+            <Card className="rounded-3xl border bg-white shadow-sm overflow-hidden">
               <CardContent className="p-0">
                 <div className="p-6 border-b flex items-center justify-between bg-primary/5">
                   <div className="flex items-center gap-3">
@@ -174,10 +176,10 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
                     </div>
                     <div>
                       <p className="font-bold">{item.ownerName}</p>
-                      <p className="text-xs text-muted-foreground">Active 2 hours ago</p>
+                      <p className="text-xs text-muted-foreground">Verified Neighbor</p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="rounded-xl border-primary text-primary hover:bg-primary/5">
+                  <Button variant="ghost" size="sm" className="rounded-xl font-bold text-primary hover:bg-primary/5">
                     View Profile
                   </Button>
                 </div>
@@ -191,98 +193,106 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
             </Card>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              {user?.isAnonymous ? (
-                <Button 
-                  onClick={() => {
-                    toast({
-                      title: "Sign Up Required",
-                      description: "Guest users cannot propose swaps. Join our community to start bartering!",
-                    });
-                    router.push('/signup');
-                  }}
-                  className="flex-1 h-14 rounded-2xl bg-primary hover:bg-primary/90 text-lg font-bold gap-2"
-                >
-                  <RefreshCw className="h-5 w-5" />
-                  Sign Up to Swap
-                </Button>
+              {isGuest ? (
+                <div className="flex-1 space-y-3">
+                  <Button 
+                    onClick={() => {
+                      toast({
+                        title: "Sign Up Required",
+                        description: "You're browsing as a guest. Join justSwap to propose trades!",
+                      });
+                      router.push('/signup');
+                    }}
+                    className="w-full h-16 rounded-2xl bg-black hover:bg-black/90 text-lg font-bold gap-2 shadow-lg"
+                  >
+                    <RefreshCw className="h-5 w-5" />
+                    Sign Up to Swap
+                  </Button>
+                  <p className="text-center text-xs text-muted-foreground italic">
+                    You must have a full account to send swap proposals.
+                  </p>
+                </div>
               ) : (
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button className="flex-1 h-14 rounded-2xl bg-primary hover:bg-primary/90 text-lg font-bold gap-2">
-                      <RefreshCw className="h-5 w-5" />
+                    <Button className="flex-1 h-16 rounded-2xl bg-black hover:bg-black/90 text-xl font-bold gap-2 shadow-lg transition-transform active:scale-[0.98]">
+                      <RefreshCw className="h-6 w-6" />
                       Propose a Swap
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-xl rounded-3xl">
+                  <DialogContent className="sm:max-w-xl rounded-[2.5rem]">
                     <DialogHeader>
-                      <DialogTitle className="text-2xl font-headline font-bold">What would you like to offer?</DialogTitle>
+                      <DialogTitle className="text-3xl font-headline font-bold">What will you offer?</DialogTitle>
                       <DialogDescription className="text-base">
-                        Select items from your collection to exchange for the <strong>{item.title}</strong>.
+                        Select one or more items from your collection to exchange for the <strong>{item.title}</strong>.
                       </DialogDescription>
                     </DialogHeader>
                     <div className="py-6 space-y-4">
-                      <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Your Listings</p>
+                      <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Your Listed Items</p>
                       <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto pr-2">
                         {MY_ITEMS.map(myItem => (
                           <div 
                             key={myItem.id}
-                            className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                            className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all cursor-pointer ${
                               selectedOfferItems.includes(myItem.id) 
                               ? 'border-primary bg-primary/5' 
-                              : 'border-border hover:border-primary/50'
+                              : 'border-border hover:border-primary/30'
                             }`}
                             onClick={() => toggleItemSelection(myItem.id)}
                           >
                             <Checkbox 
                               checked={selectedOfferItems.includes(myItem.id)}
                               onCheckedChange={() => toggleItemSelection(myItem.id)}
-                              className="h-5 w-5 rounded-md"
+                              className="h-6 w-6 rounded-md"
                             />
-                            <div className="relative h-12 w-12 rounded-lg overflow-hidden flex-shrink-0">
+                            <div className="relative h-14 w-14 rounded-xl overflow-hidden flex-shrink-0 border shadow-sm">
                               <Image src={myItem.imageUrl} alt={myItem.title} fill className="object-cover" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="font-bold truncate">{myItem.title}</p>
-                              <p className="text-xs text-muted-foreground">{myItem.category} • {myItem.condition}</p>
+                              <p className="font-bold text-lg truncate">{myItem.title}</p>
+                              <p className="text-xs text-muted-foreground font-medium">{myItem.category} • {myItem.condition}</p>
                             </div>
                           </div>
                         ))}
                       </div>
                       <Link href="/list-item" className="block">
-                        <Button variant="outline" className="w-full border-dashed rounded-xl py-8">
-                          + List a new item to offer
+                        <Button variant="outline" className="w-full border-dashed rounded-2xl py-10 hover:bg-primary/5 hover:border-primary/50 text-muted-foreground hover:text-primary transition-all">
+                          <div className="flex flex-col items-center gap-1">
+                            <span className="text-lg font-bold">+ List a new item</span>
+                            <span className="text-xs">Don't see what you want to trade? Add it now!</span>
+                          </div>
                         </Button>
                       </Link>
                     </div>
-                    <DialogFooter className="sm:justify-between items-center border-t pt-6">
-                      <p className="text-sm font-medium text-muted-foreground">
-                        {selectedOfferItems.length} item(s) selected
+                    <DialogFooter className="sm:justify-between items-center border-t pt-6 gap-4">
+                      <p className="text-sm font-bold text-muted-foreground">
+                        {selectedOfferItems.length} {selectedOfferItems.length === 1 ? 'item' : 'items'} selected
                       </p>
                       <Button 
                         onClick={handleProposeSwap} 
                         disabled={isSubmitting || selectedOfferItems.length === 0}
-                        className="rounded-xl px-8 h-12 bg-primary font-bold"
+                        className="rounded-2xl px-10 h-14 bg-black font-bold text-lg shadow-xl"
                       >
-                        {isSubmitting ? "Sending..." : "Send Proposal"}
+                        {isSubmitting ? <Loader2 className="animate-spin h-5 w-5" /> : "Send Proposal"}
                       </Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
               )}
 
-              <Button variant="outline" className="h-14 px-6 rounded-2xl border-2 hover:bg-red-50 hover:text-red-500 hover:border-red-200">
-                <Heart className="h-6 w-6" />
+              <Button variant="outline" className="h-16 px-8 rounded-2xl border-2 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all shadow-sm group">
+                <Heart className="h-6 w-6 group-hover:fill-current" />
                 <span className="sr-only">Favorite</span>
               </Button>
             </div>
 
-            <div className="bg-primary/5 p-6 rounded-2xl border border-primary/20 space-y-3">
+            <div className="bg-primary/5 p-6 rounded-[2rem] border border-primary/10 space-y-3">
               <div className="flex items-center gap-2 text-primary font-bold">
                 <ShieldCheck className="h-5 w-5" />
                 Swap Safe Exchange
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                We recommend meeting in a public, well-lit place for the exchange. All users are verified for your security.
+                Remember to meet in a public, well-lit "Swap Zone" like a coffee shop or community center for your exchange. Safety first!
               </p>
             </div>
           </div>
