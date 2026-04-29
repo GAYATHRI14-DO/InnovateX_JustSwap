@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -9,21 +8,25 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { SwapLogo } from '@/components/layout/SwapLogo';
 import { Badge } from '@/components/ui/badge';
-import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase, useUser } from '@/firebase';
 import { collection, query, limit } from 'firebase/firestore';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function ExplorePage() {
+  const { user } = useUser();
   const firestore = useFirestore();
   const heroImage = PlaceHolderImages.find(img => img.id === 'item-camera');
   const ctaImage = PlaceHolderImages.find(img => img.id === 'community-collaboration');
 
   const featuredItemsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'items'), limit(4));
+    return query(collection(firestore, 'items'), limit(12));
   }, [firestore]);
 
   const { data: items, isLoading } = useCollection(featuredItemsQuery);
+
+  // Filter out items owned by the current user
+  const displayedItems = (items || []).filter(item => item.ownerId !== user?.uid).slice(0, 4);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -99,7 +102,7 @@ export default function ExplorePage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {(items || []).map(item => (
+              {displayedItems.map(item => (
                 <ItemCard key={item.id} item={{
                   ...item,
                   imageUrl: item.imageUrls?.[0] || `https://picsum.photos/seed/${item.id}/600/400`,
@@ -107,9 +110,9 @@ export default function ExplorePage() {
                   createdAt: item.listedDate
                 }} />
               ))}
-              {!isLoading && (!items || items.length === 0) && (
+              {!isLoading && displayedItems.length === 0 && (
                 <div className="col-span-full py-12 text-center text-muted-foreground border-2 border-dashed rounded-3xl">
-                  No items listed yet. Be the first to share!
+                  {user ? "No new items found. Your own items are listed in your dashboard." : "No items listed yet. Be the first to share!"}
                 </div>
               )}
             </div>

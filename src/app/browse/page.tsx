@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -14,10 +13,11 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { Search, Loader2 } from 'lucide-react';
-import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase, useUser } from '@/firebase';
 import { collection } from 'firebase/firestore';
 
 export default function BrowsePage() {
+  const { user } = useUser();
   const [searchQuery, setSearchQuery] = useState('');
   const [category, setCategory] = useState('all');
   const [condition, setCondition] = useState('all');
@@ -31,6 +31,9 @@ export default function BrowsePage() {
   const { data: items, isLoading } = useCollection(itemsQuery);
 
   const filteredItems = (items || []).filter(item => {
+    // Hide current user's items from their own browse feed
+    if (user && item.ownerId === user.uid) return false;
+
     const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           item.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = category === 'all' || item.category === category;
@@ -100,7 +103,7 @@ export default function BrowsePage() {
                 <ItemCard key={item.id} item={{
                   ...item,
                   imageUrl: item.imageUrls?.[0] || `https://picsum.photos/seed/${item.id}/600/400`,
-                  ownerName: 'Community Member', // Would normally fetch from UserProfile
+                  ownerName: 'Community Member',
                   createdAt: item.listedDate
                 }} />
               ))}
@@ -114,7 +117,7 @@ export default function BrowsePage() {
                   <Search className="h-8 w-8" />
                 </div>
                 <h3 className="text-xl font-bold">No items found</h3>
-                <p className="text-muted-foreground">Try adjusting your filters or search query to find what you're looking for.</p>
+                <p className="text-muted-foreground">Try adjusting your filters or search query. Note that your own listings are managed in your dashboard.</p>
                 <Button 
                   onClick={() => {setSearchQuery(''); setCategory('all'); setCondition('all');}}
                   variant="outline" 
