@@ -12,63 +12,43 @@ import {
   Package, 
   RefreshCw, 
   Settings, 
-  LogOut, 
   ChevronRight, 
   Clock, 
   Loader2,
-  Inbox,
-  LogIn
+  Inbox
 } from 'lucide-react';
 import Link from 'next/link';
-import { useUser, useFirestore, useDoc, useMemoFirebase, useCollection, updateDocumentNonBlocking } from '@/firebase';
-import { doc, collection, query, where } from 'firebase/firestore';
-import { signOut } from 'firebase/auth';
-import { useAuth } from '@/firebase';
+import { useFirestore, useDoc, useMemoFirebase, useCollection, updateDocumentNonBlocking } from '@/firebase';
+import { doc, collection } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 export default function DashboardPage() {
-  const { user, isUserLoading } = useUser();
-  const auth = useAuth();
   const firestore = useFirestore();
   const { toast } = useToast();
 
+  // For a purely public demo, we'll use a hardcoded demo user ID
+  const demoUserId = 'demo-user-123';
+
   const userDocRef = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return doc(firestore, 'users', user.uid);
-  }, [firestore, user]);
+    if (!firestore) return null;
+    return doc(firestore, 'users', demoUserId);
+  }, [firestore]);
 
   const { data: profile, isLoading: isProfileLoading } = useDoc(userDocRef);
 
   // My Listings
   const myListingsQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return collection(firestore, 'users', user.uid, 'items');
-  }, [firestore, user]);
+    if (!firestore) return null;
+    return collection(firestore, 'users', demoUserId, 'items');
+  }, [firestore]);
   const { data: myListings, isLoading: isListingsLoading } = useCollection(myListingsQuery);
 
   // Incoming Proposals
   const incomingProposalsQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return query(
-      collection(firestore, 'swapProposals'),
-      where('targetItemOwnerId', '==', user.uid)
-    );
-  }, [firestore, user]);
+    if (!firestore) return null;
+    return collection(firestore, 'swapProposals');
+  }, [firestore]);
   const { data: incomingProposals, isLoading: isIncomingLoading } = useCollection(incomingProposalsQuery);
-
-  // Sent Proposals
-  const sentProposalsQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return query(
-      collection(firestore, 'swapProposals'),
-      where('proposerId', '==', user.uid)
-    );
-  }, [firestore, user]);
-  const { data: sentProposals, isLoading: isSentLoading } = useCollection(sentProposalsQuery);
-
-  const handleSignOut = () => {
-    signOut(auth);
-  };
 
   const handleUpdateStatus = (proposalId: string, newStatus: 'Accepted' | 'Declined') => {
     if (!firestore) return;
@@ -83,7 +63,7 @@ export default function DashboardPage() {
     });
   };
 
-  if (isUserLoading || isProfileLoading) {
+  if (isProfileLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -91,21 +71,9 @@ export default function DashboardPage() {
     );
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-muted/30 text-center space-y-4">
-        <h2 className="text-2xl font-headline font-bold">Please Sign In</h2>
-        <p className="text-muted-foreground">You need to be logged in to access your dashboard.</p>
-        <Link href="/">
-          <Button>Back to Home</Button>
-        </Link>
-      </div>
-    );
-  }
-
-  const displayName = profile?.firstName ? `${profile.firstName} ${profile.lastName}` : (user?.displayName || (user.isAnonymous ? 'Guest User' : 'User'));
-  const userEmail = user?.email || (user.isAnonymous ? 'Guest Mode' : 'No email');
-  const userAvatar = user?.photoURL || `https://picsum.photos/seed/${user?.uid}/200/200`;
+  const displayName = profile?.firstName ? `${profile.firstName} ${profile.lastName}` : "Community Member";
+  const userEmail = "community@justswap.io";
+  const userAvatar = `https://picsum.photos/seed/demo-user/200/200`;
 
   const pendingIncoming = incomingProposals?.filter(p => p.status === 'Pending') || [];
 
@@ -126,11 +94,6 @@ export default function DashboardPage() {
                 <div>
                   <h2 className="text-2xl font-headline font-bold">{displayName}</h2>
                   <p className="text-sm text-muted-foreground">{userEmail}</p>
-                  {user.isAnonymous && (
-                    <Badge variant="outline" className="mt-2 bg-yellow-50 text-yellow-700 border-yellow-200">
-                      Guest Account
-                    </Badge>
-                  )}
                 </div>
                 <div className="pt-4 space-y-2">
                   <Link href="/profile/edit" className="block w-full">
@@ -139,25 +102,6 @@ export default function DashboardPage() {
                       Edit Profile
                     </Button>
                   </Link>
-                  {user.isAnonymous ? (
-                    <Link href="/login" className="block w-full">
-                      <Button 
-                        className="w-full justify-start gap-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90"
-                      >
-                        <LogIn className="h-4 w-4" />
-                        Sign In Now
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-start gap-2 rounded-xl text-destructive hover:bg-destructive/5 hover:text-destructive"
-                      onClick={handleSignOut}
-                    >
-                      <LogOut className="h-4 w-4" />
-                      Sign Out
-                    </Button>
-                  )}
                 </div>
               </CardContent>
             </Card>
@@ -195,7 +139,7 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 gap-4">
                   <h3 className="text-xl font-headline font-bold flex items-center gap-2">
                     <RefreshCw className="h-5 w-5 text-primary" />
-                    Incoming Proposals
+                    Community Proposals
                   </h3>
                   
                   {isIncomingLoading ? (
@@ -206,15 +150,15 @@ export default function DashboardPage() {
                         <CardContent className="p-6">
                           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                             <div className="flex-1">
-                              <p className="text-sm font-medium text-muted-foreground">New proposal received</p>
-                              <h4 className="font-headline font-bold text-lg">{proposal.message || "Wants to trade with you"}</h4>
-                              <p className="text-xs text-muted-foreground">Offered {proposal.offeredItemIds.length} item(s)</p>
+                              <p className="text-sm font-medium text-muted-foreground">Swap request</p>
+                              <h4 className="font-headline font-bold text-lg">{proposal.message || "Wants to trade"}</h4>
+                              <p className="text-xs text-muted-foreground">Offered {proposal.offeredItemIds?.length || 0} item(s)</p>
                             </div>
 
                             <div className="flex gap-2 w-full md:w-auto">
                               <Button 
                                 onClick={() => handleUpdateStatus(proposal.id, 'Accepted')}
-                                className="bg-primary rounded-xl flex-1 md:flex-none"
+                                className="bg-primary rounded-xl flex-1 md:flex-none text-white"
                               >
                                 Accept
                               </Button>
@@ -240,47 +184,7 @@ export default function DashboardPage() {
                   ) : (
                     <div className="p-12 text-center bg-muted/30 rounded-2xl border-2 border-dashed">
                       <Inbox className="h-8 w-8 mx-auto text-muted-foreground mb-2 opacity-50" />
-                      <p className="text-muted-foreground">No pending incoming proposals.</p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-4 pt-6">
-                  <h3 className="text-xl font-headline font-bold flex items-center gap-2">
-                    <Clock className="h-5 w-5 text-primary" />
-                    Sent Proposals
-                  </h3>
-                  
-                  {isSentLoading ? (
-                    <div className="p-12 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div>
-                  ) : sentProposals && sentProposals.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {sentProposals.map((proposal) => (
-                        <Link key={proposal.id} href={`/proposals/${proposal.id}`}>
-                          <Card className="rounded-2xl border bg-white p-4 hover:shadow-md transition-shadow">
-                            <div className="flex items-center gap-3">
-                              <div className="flex-1 min-w-0">
-                                <p className="text-xs text-muted-foreground truncate">Proposal for your items</p>
-                                <div className="flex items-center gap-2">
-                                  <Badge className={`${
-                                    proposal.status === 'Pending' ? 'bg-yellow-100 text-yellow-700' :
-                                    proposal.status === 'Accepted' ? 'bg-green-100 text-green-700' :
-                                    'bg-red-100 text-red-700'
-                                  } border-none px-2 py-0 h-5`}>
-                                    {proposal.status}
-                                  </Badge>
-                                  <span className="text-xs text-muted-foreground">{new Date(proposal.proposalDate).toLocaleDateString()}</span>
-                                </div>
-                              </div>
-                              <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                            </div>
-                          </Card>
-                        </Link>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="p-12 text-center bg-muted/30 rounded-2xl border-2 border-dashed">
-                      <p className="text-muted-foreground">You haven't sent any proposals yet.</p>
+                      <p className="text-muted-foreground">No pending proposals at the moment.</p>
                     </div>
                   )}
                 </div>
@@ -290,7 +194,7 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-headline font-bold flex items-center gap-2">
                     <Package className="h-5 w-5 text-primary" />
-                    My Items ({myListings?.length || 0})
+                    Listed Items ({myListings?.length || 0})
                   </h3>
                   <Link href="/list-item">
                     <Button variant="outline" className="rounded-xl border-primary text-primary hover:bg-primary/5">
@@ -318,7 +222,7 @@ export default function DashboardPage() {
                     ))
                   ) : (
                     <div className="col-span-full py-20 text-center bg-muted/30 rounded-3xl border-2 border-dashed">
-                      <p className="text-muted-foreground">You haven't listed any items yet.</p>
+                      <p className="text-muted-foreground">No items have been listed yet.</p>
                       <Link href="/list-item" className="mt-4 inline-block">
                         <Button variant="outline">List Your First Item</Button>
                       </Link>

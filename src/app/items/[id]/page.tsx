@@ -1,7 +1,7 @@
 
 "use client";
 
-import { use, useState, useEffect } from 'react';
+import { use, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
@@ -22,34 +22,15 @@ import { ITEMS, MY_ITEMS } from '@/lib/mock-data';
 import { MapPin, Calendar, User, RefreshCw, ChevronLeft, ShieldCheck, Heart, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@/firebase';
 
 export default function ItemDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const { user, isUserLoading } = useUser();
   const router = useRouter();
   const { toast } = useToast();
   
   const item = ITEMS.find(i => i.id === id);
   const [selectedOfferItems, setSelectedOfferItems] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (!isUserLoading && !user) {
-      router.push("/login");
-    }
-  }, [user, isUserLoading, router]);
-
-  if (isUserLoading || !user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-black" />
-          <p className="text-sm font-medium animate-pulse text-muted-foreground">Verifying access...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (!item) {
     return (
@@ -63,16 +44,6 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
   }
 
   const handleProposeSwap = () => {
-    if (user?.isAnonymous) {
-      toast({
-        title: "Full Account Required",
-        description: "Guest users cannot propose swaps. Please sign up to start bartering!",
-        variant: "destructive"
-      });
-      router.push('/signup');
-      return;
-    }
-
     if (selectedOfferItems.length === 0) {
       toast({
         title: "No items selected",
@@ -100,8 +71,6 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
         : [...prev, itemId]
     );
   };
-
-  const isGuest = user?.isAnonymous;
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -193,92 +162,71 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
             </Card>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              {isGuest ? (
-                <div className="flex-1 space-y-3">
-                  <Button 
-                    onClick={() => {
-                      toast({
-                        title: "Sign Up Required",
-                        description: "You're browsing as a guest. Join justSwap to propose trades!",
-                      });
-                      router.push('/signup');
-                    }}
-                    className="w-full h-16 rounded-2xl bg-black hover:bg-black/90 text-lg font-bold gap-2 shadow-lg"
-                  >
-                    <RefreshCw className="h-5 w-5" />
-                    Sign Up to Swap
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="flex-1 h-16 rounded-2xl bg-black text-white hover:bg-black/90 text-xl font-bold gap-2 shadow-lg transition-transform active:scale-[0.98]">
+                    <RefreshCw className="h-6 w-6" />
+                    Propose a Swap
                   </Button>
-                  <p className="text-center text-xs text-muted-foreground italic">
-                    You must have a full account to send swap proposals.
-                  </p>
-                </div>
-              ) : (
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="flex-1 h-16 rounded-2xl bg-black hover:bg-black/90 text-xl font-bold gap-2 shadow-lg transition-transform active:scale-[0.98]">
-                      <RefreshCw className="h-6 w-6" />
-                      Propose a Swap
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-xl rounded-[2.5rem]">
-                    <DialogHeader>
-                      <DialogTitle className="text-3xl font-headline font-bold">What will you offer?</DialogTitle>
-                      <DialogDescription className="text-base">
-                        Select one or more items from your collection to exchange for the <strong>{item.title}</strong>.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="py-6 space-y-4">
-                      <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Your Listed Items</p>
-                      <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto pr-2">
-                        {MY_ITEMS.map(myItem => (
-                          <div 
-                            key={myItem.id}
-                            className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all cursor-pointer ${
-                              selectedOfferItems.includes(myItem.id) 
-                              ? 'border-primary bg-primary/5' 
-                              : 'border-border hover:border-primary/30'
-                            }`}
-                            onClick={() => toggleItemSelection(myItem.id)}
-                          >
-                            <Checkbox 
-                              checked={selectedOfferItems.includes(myItem.id)}
-                              onCheckedChange={() => toggleItemSelection(myItem.id)}
-                              className="h-6 w-6 rounded-md"
-                            />
-                            <div className="relative h-14 w-14 rounded-xl overflow-hidden flex-shrink-0 border shadow-sm">
-                              <Image src={myItem.imageUrl} alt={myItem.title} fill className="object-cover" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-bold text-lg truncate">{myItem.title}</p>
-                              <p className="text-xs text-muted-foreground font-medium">{myItem.category} • {myItem.condition}</p>
-                            </div>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-xl rounded-[2.5rem]">
+                  <DialogHeader>
+                    <DialogTitle className="text-3xl font-headline font-bold">What will you offer?</DialogTitle>
+                    <DialogDescription className="text-base">
+                      Select one or more items from your collection to exchange for the <strong>{item.title}</strong>.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="py-6 space-y-4">
+                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Your Listed Items</p>
+                    <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto pr-2">
+                      {MY_ITEMS.map(myItem => (
+                        <div 
+                          key={myItem.id}
+                          className={`flex items-center gap-4 p-5 rounded-2xl border-2 transition-all cursor-pointer ${
+                            selectedOfferItems.includes(myItem.id) 
+                            ? 'border-primary bg-primary/5' 
+                            : 'border-border hover:border-primary/30'
+                          }`}
+                          onClick={() => toggleItemSelection(myItem.id)}
+                        >
+                          <Checkbox 
+                            checked={selectedOfferItems.includes(myItem.id)}
+                            onCheckedChange={() => toggleItemSelection(myItem.id)}
+                            className="h-6 w-6 rounded-md"
+                          />
+                          <div className="relative h-14 w-14 rounded-xl overflow-hidden flex-shrink-0 border shadow-sm">
+                            <Image src={myItem.imageUrl} alt={myItem.title} fill className="object-cover" />
                           </div>
-                        ))}
-                      </div>
-                      <Link href="/list-item" className="block">
-                        <Button variant="outline" className="w-full border-dashed rounded-2xl py-10 hover:bg-primary/5 hover:border-primary/50 text-muted-foreground hover:text-primary transition-all">
-                          <div className="flex flex-col items-center gap-1">
-                            <span className="text-lg font-bold">+ List a new item</span>
-                            <span className="text-xs">Don't see what you want to trade? Add it now!</span>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-lg truncate">{myItem.title}</p>
+                            <p className="text-xs text-muted-foreground font-medium">{myItem.category} • {myItem.condition}</p>
                           </div>
-                        </Button>
-                      </Link>
+                        </div>
+                      ))}
                     </div>
-                    <DialogFooter className="sm:justify-between items-center border-t pt-6 gap-4">
-                      <p className="text-sm font-bold text-muted-foreground">
-                        {selectedOfferItems.length} {selectedOfferItems.length === 1 ? 'item' : 'items'} selected
-                      </p>
-                      <Button 
-                        onClick={handleProposeSwap} 
-                        disabled={isSubmitting || selectedOfferItems.length === 0}
-                        className="rounded-2xl px-10 h-14 bg-black font-bold text-lg shadow-xl"
-                      >
-                        {isSubmitting ? <Loader2 className="animate-spin h-5 w-5" /> : "Send Proposal"}
+                    <Link href="/list-item" className="block">
+                      <Button variant="outline" className="w-full border-dashed rounded-2xl py-10 hover:bg-primary/5 hover:border-primary/50 text-muted-foreground hover:text-primary transition-all">
+                        <div className="flex flex-col items-center gap-1">
+                          <span className="text-lg font-bold">+ List a new item</span>
+                          <span className="text-xs">Don't see what you want to trade? Add it now!</span>
+                        </div>
                       </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              )}
+                    </Link>
+                  </div>
+                  <DialogFooter className="sm:justify-between items-center border-t pt-6 gap-4">
+                    <p className="text-sm font-bold text-muted-foreground">
+                      {selectedOfferItems.length} {selectedOfferItems.length === 1 ? 'item' : 'items'} selected
+                    </p>
+                    <Button 
+                      onClick={handleProposeSwap} 
+                      disabled={isSubmitting || selectedOfferItems.length === 0}
+                      className="rounded-2xl px-10 h-14 bg-black text-white font-bold text-lg shadow-xl"
+                    >
+                      {isSubmitting ? <Loader2 className="animate-spin h-5 w-5" /> : "Send Proposal"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
 
               <Button variant="outline" className="h-16 px-8 rounded-2xl border-2 hover:bg-red-50 hover:text-red-500 hover:border-red-100 transition-all shadow-sm group">
                 <Heart className="h-6 w-6 group-hover:fill-current" />
@@ -292,7 +240,7 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
                 Swap Safe Exchange
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Remember to meet in a public, well-lit "Swap Zone" like a coffee shop or community center for your exchange. Safety first!
+                Remember to meet in a public, well-lit place for your exchange. Safety first!
               </p>
             </div>
           </div>

@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,12 +15,12 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { Camera, ChevronLeft, X, MapPin, Loader2 } from 'lucide-react';
+import { Camera, ChevronLeft, X, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
-import { useUser, useFirestore } from '@/firebase';
+import { useFirestore } from '@/firebase';
 import { collection, doc, setDoc } from 'firebase/firestore';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
@@ -36,46 +36,23 @@ export default function ListItemPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { toast } = useToast();
-  const { user, isUserLoading } = useUser();
   const db = useFirestore();
 
-  useEffect(() => {
-    if (!isUserLoading && !user) {
-      router.push("/login");
-    }
-  }, [user, isUserLoading, router]);
+  const demoUserId = 'demo-user-123';
 
   const handleListingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !db) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in to list an item.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (user.isAnonymous) {
-      toast({
-        title: "Full Account Required",
-        description: "Guest users cannot list items. Please sign up to start swapping!",
-        variant: "destructive",
-      });
-      router.push('/signup');
-      return;
-    }
+    if (!db) return;
 
     setIsSubmitting(true);
 
-    // Generate a common ID for both denormalized locations
     const globalItemRef = doc(collection(db, 'items'));
     const itemId = globalItemRef.id;
-    const userItemRef = doc(db, 'users', user.uid, 'items', itemId);
+    const userItemRef = doc(db, 'users', demoUserId, 'items', itemId);
 
     const itemData = {
       id: itemId,
-      ownerId: user.uid,
+      ownerId: demoUserId,
       title,
       description,
       condition,
@@ -83,12 +60,11 @@ export default function ListItemPage() {
       imageUrls: images,
       listedDate: new Date().toISOString(),
       status: 'available',
-      location: location || 'Gayathri, Surathkal',
+      location: location || 'Local Area',
       viewCount: 0,
     };
 
     try {
-      // Save to global items collection
       setDoc(globalItemRef, itemData).catch((err) => {
         errorEmitter.emit('permission-error', new FirestorePermissionError({
           path: globalItemRef.path,
@@ -97,7 +73,6 @@ export default function ListItemPage() {
         }));
       });
 
-      // Save to user-specific subcollection
       setDoc(userItemRef, itemData).catch((err) => {
         errorEmitter.emit('permission-error', new FirestorePermissionError({
           path: userItemRef.path,
@@ -141,14 +116,6 @@ export default function ListItemPage() {
     fileInputRef.current?.click();
   };
 
-  if (isUserLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
@@ -163,11 +130,6 @@ export default function ListItemPage() {
             <div className="space-y-2">
               <h1 className="text-4xl font-headline font-bold">List an Item</h1>
               <p className="text-muted-foreground">Share what you have and let the community know what you need in return.</p>
-              {user?.isAnonymous && (
-                <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-xl text-yellow-800 text-sm">
-                  <strong>Note:</strong> You are currently browsing as a guest. You will need to <Link href="/signup" className="font-bold underline">sign up</Link> to publish this listing.
-                </div>
-              )}
             </div>
 
             <Card className="rounded-2xl border-2 shadow-sm">
@@ -177,7 +139,7 @@ export default function ListItemPage() {
                     <Label htmlFor="title">Item Title</Label>
                     <Input 
                       id="title" 
-                      placeholder="e.g. 2019 MacBook Pro" 
+                      placeholder="e.g. Vintage Camera" 
                       className="h-12 rounded-xl"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
@@ -225,7 +187,7 @@ export default function ListItemPage() {
                       <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input 
                         id="location" 
-                        placeholder="e.g. Gayathri, Surathkal" 
+                        placeholder="e.g. Downtown" 
                         className="h-12 rounded-xl pl-10"
                         value={location}
                         onChange={(e) => setLocation(e.target.value)}
@@ -283,10 +245,10 @@ export default function ListItemPage() {
 
                   <Button 
                     type="submit" 
-                    className="w-full h-14 text-lg font-bold rounded-2xl bg-primary hover:bg-primary/90"
+                    className="w-full h-14 text-lg font-bold rounded-2xl bg-black text-white hover:bg-black/90"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Listing Item..." : (user?.isAnonymous ? "Sign Up to Publish" : "Publish Listing")}
+                    {isSubmitting ? "Listing Item..." : "Publish Listing"}
                   </Button>
                 </form>
               </CardContent>
@@ -305,10 +267,6 @@ export default function ListItemPage() {
                   <li className="flex gap-2">
                     <span className="text-primary font-bold">•</span>
                     Upload clear photos from multiple angles.
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-primary font-bold">•</span>
-                    Mention what kind of items you are looking for.
                   </li>
                 </ul>
               </div>
