@@ -128,8 +128,9 @@ export function Navbar() {
                 </Link>
               ) : (
                 <Link href="/dashboard">
-                  <Button variant="ghost" size="icon" title="Account" className="rounded-xl border border-transparent hover:border-black/10">
-                    <User className="h-5 w-5" />
+                  <Button className="gap-2 rounded-xl font-bold bg-black text-white hover:bg-black/90 shadow-md">
+                    <User className="h-4 w-4" />
+                    Dashboard
                   </Button>
                 </Link>
               )}
