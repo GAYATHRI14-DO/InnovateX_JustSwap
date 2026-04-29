@@ -14,7 +14,6 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { AIHelper } from '@/components/items/AIHelper';
 import { Card, CardContent } from '@/components/ui/card';
 import { Camera, ChevronLeft, X, MapPin } from 'lucide-react';
 import Link from 'next/link';
@@ -267,13 +266,7 @@ export default function ListItemPage() {
 
           <div className="space-y-6">
             <div className="sticky top-24">
-              <AIHelper 
-                title={title} 
-                category={category} 
-                onDescriptionGenerated={(desc) => setDescription(desc)} 
-              />
-              
-              <div className="mt-8 p-6 bg-white rounded-2xl border shadow-sm space-y-4">
+              <div className="p-6 bg-white rounded-2xl border shadow-sm space-y-4">
                 <h3 className="font-headline font-bold">Listing Tips</h3>
                 <ul className="text-sm space-y-3 text-muted-foreground">
                   <li className="flex gap-2">
