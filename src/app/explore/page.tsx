@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -11,12 +12,21 @@ import { Badge } from '@/components/ui/badge';
 import { useFirestore, useCollection, useMemoFirebase, useUser } from '@/firebase';
 import { collection, query, limit } from 'firebase/firestore';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function ExplorePage() {
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
   const firestore = useFirestore();
   const heroImage = PlaceHolderImages.find(img => img.id === 'item-camera');
   const ctaImage = PlaceHolderImages.find(img => img.id === 'community-collaboration');
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push("/");
+    }
+  }, [user, isUserLoading, router]);
 
   const featuredItemsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -25,8 +35,15 @@ export default function ExplorePage() {
 
   const { data: items, isLoading } = useCollection(featuredItemsQuery);
 
-  // Filter out items owned by the current user
   const displayedItems = (items || []).filter(item => item.ownerId !== user?.uid).slice(0, 4);
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background">

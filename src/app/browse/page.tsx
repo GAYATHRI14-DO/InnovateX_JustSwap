@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { ItemCard } from '@/components/items/ItemCard';
 import { Input } from '@/components/ui/input';
@@ -15,12 +16,20 @@ import {
 import { Search, Loader2 } from 'lucide-react';
 import { useFirestore, useCollection, useMemoFirebase, useUser } from '@/firebase';
 import { collection } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
 
 export default function BrowsePage() {
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [category, setCategory] = useState('all');
   const [condition, setCondition] = useState('all');
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push("/");
+    }
+  }, [user, isUserLoading, router]);
 
   const firestore = useFirestore();
   const itemsQuery = useMemoFirebase(() => {
@@ -40,6 +49,14 @@ export default function BrowsePage() {
     const matchesCondition = condition === 'all' || item.condition === condition;
     return matchesSearch && matchesCategory && matchesCondition;
   });
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
