@@ -32,7 +32,7 @@ export default function ExplorePage() {
 
   useEffect(() => {
     if (!isUserLoading && !user) {
-      router.push("/login");
+      router.push("/");
     }
   }, [user, isUserLoading, router]);
 
@@ -50,7 +50,6 @@ export default function ExplorePage() {
   const firestoreList = firestoreItems || [];
   const combinedItems = [...firestoreList, ...ITEMS];
   const uniqueItems = Array.from(new Map(combinedItems.map(item => [item.id, item])).values());
-  // Show only two featured items for a cleaner landing page
   const featuredItems = uniqueItems.filter(item => user && item.ownerId !== user.uid).slice(0, 2);
 
   return (
@@ -133,67 +132,6 @@ export default function ExplorePage() {
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits / Info Section */}
-      <section className="py-24 bg-muted/20">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-            <div className="space-y-4">
-              <div className="h-12 w-12 bg-black text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                <SwapLogo className="h-6 w-6" />
-              </div>
-              <h3 className="text-xl font-bold font-headline">Smart Swapping</h3>
-              <p className="text-muted-foreground text-sm">Exchange items you don't use for things you actually need, without spending a dime.</p>
-            </div>
-            <div className="space-y-4">
-              <div className="h-12 w-12 bg-black text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                <ArrowRight className="h-6 w-6" />
-              </div>
-              <h3 className="text-xl font-bold font-headline">Eco-Friendly</h3>
-              <p className="text-muted-foreground text-sm">Reduce your carbon footprint by giving items a second life within your local community.</p>
-            </div>
-            <div className="space-y-4">
-              <div className="h-12 w-12 bg-black text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                <Badge variant="outline" className="border-white text-white bg-black">99+</Badge>
-              </div>
-              <h3 className="text-xl font-bold font-headline">Community Trust</h3>
-              <p className="text-muted-foreground text-sm">Connect with verified neighbors for safe, reliable, and friendly exchanges.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="bg-black text-white py-24">
-        <div className="container mx-auto px-4">
-          <div className="bg-white/5 rounded-[3rem] p-8 md:p-16 flex flex-col md:flex-row items-center gap-12 overflow-hidden relative shadow-2xl border border-white/10">
-            <div className="flex-1 space-y-6 relative z-10">
-              <h2 className="text-3xl md:text-5xl font-headline font-bold leading-tight">
-                Ready to trade your first item?
-              </h2>
-              <p className="text-white/70 text-lg leading-relaxed">
-                Join thousands of people who are saving money and living more sustainably by bartering. It takes less than 2 minutes to list an item.
-              </p>
-              <Link href="/list-item" className="inline-block">
-                <Button size="lg" className="bg-white text-black hover:bg-white/90 h-14 px-10 rounded-2xl font-bold text-lg">
-                  Get Started Now
-                </Button>
-              </Link>
-            </div>
-            <div className="flex-1 relative aspect-[4/3] w-full rounded-2xl overflow-hidden shadow-xl z-10 border border-white/10">
-              {ctaImage && (
-                <Image 
-                  src={ctaImage.imageUrl} 
-                  alt={ctaImage.description} 
-                  fill 
-                  className="object-cover grayscale"
-                  data-ai-hint={ctaImage.imageHint}
-                />
-              )}
-            </div>
           </div>
         </div>
       </section>

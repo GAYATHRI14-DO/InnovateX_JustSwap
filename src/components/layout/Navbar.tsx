@@ -121,7 +121,7 @@ export function Navbar() {
             <div className="flex items-center gap-2">
               {!user ? (
                 <>
-                  <Link href="/login">
+                  <Link href="/">
                     <Button variant="ghost" className="rounded-xl font-bold">
                       Log In
                     </Button>
