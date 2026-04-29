@@ -1,7 +1,7 @@
 
 "use client";
 
-import { use, useState, useEffect } from 'react';
+import { use, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
@@ -141,7 +141,7 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Left Column: Image Gallery */}
+          {/* Left Column: Primary Image */}
           <div className="space-y-6">
             <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden shadow-2xl border bg-white">
               <Image 
@@ -151,19 +151,6 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
                 className="object-cover" 
                 data-ai-hint={item.category.toLowerCase()}
               />
-            </div>
-            <div className="grid grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="aspect-square rounded-2xl overflow-hidden border bg-muted cursor-pointer hover:border-black transition-all shadow-sm">
-                   <Image 
-                    src={`https://picsum.photos/seed/${item.id + i}/200/200`} 
-                    alt="Thumbnail" 
-                    width={200} 
-                    height={200} 
-                    className="object-cover opacity-50 hover:opacity-100 transition-opacity" 
-                  />
-                </div>
-              ))}
             </div>
           </div>
 
