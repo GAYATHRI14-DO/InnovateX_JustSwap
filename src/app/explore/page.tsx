@@ -4,22 +4,18 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
-import { ItemCard } from '@/components/items/ItemCard';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { SwapLogo } from '@/components/layout/SwapLogo';
 import { Badge } from '@/components/ui/badge';
-import { useFirestore, useCollection, useMemoFirebase, useUser } from '@/firebase';
-import { collection, query, limit } from 'firebase/firestore';
+import { useUser } from '@/firebase';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ITEMS } from '@/lib/mock-data';
 
 export default function ExplorePage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
-  const firestore = useFirestore();
   const heroImage = PlaceHolderImages.find(img => img.id === 'item-camera');
   const ctaImage = PlaceHolderImages.find(img => img.id === 'community-collaboration');
 
@@ -28,24 +24,6 @@ export default function ExplorePage() {
       router.push("/");
     }
   }, [user, isUserLoading, router]);
-
-  const featuredItemsQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
-    return query(collection(firestore, 'items'), limit(12));
-  }, [firestore]);
-
-  const { data: firestoreItems, isLoading } = useCollection(featuredItemsQuery);
-
-  // Combine live items with featured community items
-  const firestoreList = firestoreItems || [];
-  const combinedItems = [...firestoreList, ...ITEMS];
-  
-  // De-duplicate by ID and filter out the current user's items
-  const uniqueItems = Array.from(new Map(combinedItems.map(item => [item.id, item])).values());
-  const communityItems = uniqueItems.filter(item => item.ownerId !== user?.uid);
-  
-  // Display only the first few items for the featured section
-  const displayedItems = communityItems.slice(0, 8);
 
   if (isUserLoading || !user) {
     return (
@@ -105,45 +83,32 @@ export default function ExplorePage() {
         </div>
       </section>
 
-      {/* Featured Items Grid */}
-      <section className="py-24">
+      {/* Benefits / Info Section */}
+      <section className="py-24 bg-muted/20">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
             <div className="space-y-4">
-              <h2 className="text-4xl font-headline font-bold">Featured Items</h2>
-              <p className="text-muted-foreground max-w-xl">
-                Discover items available in your community right now. From electronics to books, everything is up for trade.
-              </p>
+              <div className="h-12 w-12 bg-black text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                <SwapLogo className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-bold font-headline">Smart Swapping</h3>
+              <p className="text-muted-foreground text-sm">Exchange items you don't use for things you actually need, without spending a dime.</p>
             </div>
-            <Link href="/browse">
-              <Button variant="link" className="text-black underline font-bold gap-2 text-lg">
-                View all items
-                <ArrowRight className="h-5 w-5" />
-              </Button>
-            </Link>
+            <div className="space-y-4">
+              <div className="h-12 w-12 bg-black text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                <ArrowRight className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-bold font-headline">Eco-Friendly</h3>
+              <p className="text-muted-foreground text-sm">Reduce your carbon footprint by giving items a second life within your local community.</p>
+            </div>
+            <div className="space-y-4">
+              <div className="h-12 w-12 bg-black text-white rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                <Badge variant="outline" className="border-white text-white bg-black">99+</Badge>
+              </div>
+              <h3 className="text-xl font-bold font-headline">Community Trust</h3>
+              <p className="text-muted-foreground text-sm">Connect with verified neighbors for safe, reliable, and friendly exchanges.</p>
+            </div>
           </div>
-          
-          {isLoading ? (
-            <div className="flex justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {displayedItems.map(item => (
-                <ItemCard key={item.id} item={{
-                  ...item,
-                  imageUrl: item.imageUrls?.[0] || item.imageUrl || `https://picsum.photos/seed/${item.id}/600/400`,
-                  ownerName: item.ownerName || 'Community Member',
-                  createdAt: item.listedDate || item.createdAt
-                }} />
-              ))}
-              {!isLoading && displayedItems.length === 0 && (
-                <div className="col-span-full py-12 text-center text-muted-foreground border-2 border-dashed rounded-3xl">
-                  {user ? "No new items found. Check back later for new community listings." : "No items listed yet. Be the first to share!"}
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </section>
 
