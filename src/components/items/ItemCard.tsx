@@ -1,21 +1,23 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin } from 'lucide-react';
-import type { Item } from '@/lib/mock-data';
 
-export function ItemCard({ item }: { item: Item }) {
+export function ItemCard({ item }: { item: any }) {
+  const displayImage = item.imageUrl || (item.imageUrls && item.imageUrls[0]) || `https://picsum.photos/seed/${item.id}/600/400`;
+
   return (
     <Link href={`/items/${item.id}`} className="group block">
       <Card className="overflow-hidden h-full border-2 border-transparent transition-all hover:border-black/10 hover:shadow-xl bg-white rounded-2xl">
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image
-            src={item.imageUrl}
+            src={displayImage}
             alt={item.title}
             fill
-            className="object-cover transition-transform group-hover:scale-105"
-            data-ai-hint={item.category.toLowerCase()}
+            className="object-cover transition-transform group-hover:scale-105 grayscale"
+            data-ai-hint={item.category?.toLowerCase() || 'item'}
           />
           <div className="absolute top-3 right-3">
             <Badge className="bg-white/90 text-black border-none font-bold hover:bg-white shadow-sm">

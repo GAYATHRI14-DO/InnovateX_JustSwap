@@ -16,42 +16,99 @@ import {
 } from '@/components/ui/select';
 import { AIHelper } from '@/components/items/AIHelper';
 import { Card, CardContent } from '@/components/ui/card';
-import { Camera, ChevronLeft, X } from 'lucide-react';
+import { Camera, ChevronLeft, X, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
+import { useUser, useFirestore } from '@/firebase';
+import { collection, doc, setDoc } from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
 
 export default function ListItemPage() {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [condition, setCondition] = useState('');
   const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { toast } = useToast();
+  const { user } = useUser();
+  const db = useFirestore();
 
-  const handleListingSubmit = (e: React.FormEvent) => {
+  const handleListingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user || !db) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to list an item.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
-    
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    // Generate a common ID for both denormalized locations
+    const globalItemRef = doc(collection(db, 'items'));
+    const itemId = globalItemRef.id;
+    const userItemRef = doc(db, 'users', user.uid, 'items', itemId);
+
+    const itemData = {
+      id: itemId,
+      ownerId: user.uid,
+      title,
+      description,
+      condition,
+      category,
+      imageUrls: images,
+      listedDate: new Date().toISOString(),
+      status: 'available',
+      location: location || 'Gayathri, Surathkal',
+      viewCount: 0,
+    };
+
+    try {
+      // Save to global items collection
+      setDoc(globalItemRef, itemData).catch((err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: globalItemRef.path,
+          operation: 'create',
+          requestResourceData: itemData,
+        }));
+      });
+
+      // Save to user-specific subcollection
+      setDoc(userItemRef, itemData).catch((err) => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: userItemRef.path,
+          operation: 'create',
+          requestResourceData: itemData,
+        }));
+      });
+
       toast({
         title: "Item Listed!",
         description: "Your item is now live and visible to the community.",
       });
-      router.push('/dashboard');
-    }, 1500);
+
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 500);
+    } catch (error) {
+      console.error("Error saving listing:", error);
+      setIsSubmitting(false);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
-    const newImages: string[] = [];
     Array.from(files).forEach(file => {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -131,6 +188,21 @@ export default function ListItemPage() {
                           <SelectItem value="Poor">Poor</SelectItem>
                         </SelectContent>
                       </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="location">Location</Label>
+                    <div className="relative">
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        id="location" 
+                        placeholder="e.g. Gayathri, Surathkal" 
+                        className="h-12 rounded-xl pl-10"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        required
+                      />
                     </div>
                   </div>
 

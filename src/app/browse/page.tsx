@@ -13,15 +13,24 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { ITEMS } from '@/lib/mock-data';
-import { Search } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
 
 export default function BrowsePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [category, setCategory] = useState('all');
   const [condition, setCondition] = useState('all');
 
-  const filteredItems = ITEMS.filter(item => {
+  const firestore = useFirestore();
+  const itemsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'items');
+  }, [firestore]);
+
+  const { data: items, isLoading } = useCollection(itemsQuery);
+
+  const filteredItems = (items || []).filter(item => {
     const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           item.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = category === 'all' || item.category === category;
@@ -80,13 +89,25 @@ export default function BrowsePage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredItems.map(item => (
-              <ItemCard key={item.id} item={item} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="py-20 flex flex-col items-center justify-center gap-4 text-muted-foreground">
+              <Loader2 className="h-10 w-10 animate-spin" />
+              <p>Loading the marketplace...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredItems.map(item => (
+                <ItemCard key={item.id} item={{
+                  ...item,
+                  imageUrl: item.imageUrls?.[0] || `https://picsum.photos/seed/${item.id}/600/400`,
+                  ownerName: 'Community Member', // Would normally fetch from UserProfile
+                  createdAt: item.listedDate
+                }} />
+              ))}
+            </div>
+          )}
 
-          {filteredItems.length === 0 && (
+          {!isLoading && filteredItems.length === 0 && (
             <div className="text-center py-20 bg-muted/30 rounded-3xl border-2 border-dashed">
               <div className="max-w-xs mx-auto space-y-4">
                 <div className="bg-muted h-16 w-16 rounded-full flex items-center justify-center mx-auto text-muted-foreground">

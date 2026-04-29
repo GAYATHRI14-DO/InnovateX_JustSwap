@@ -6,30 +6,24 @@ import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar';
 import { ItemCard } from '@/components/items/ItemCard';
 import { Button } from '@/components/ui/button';
-import { ITEMS } from '@/lib/mock-data';
-import { ArrowRight, RefreshCw, ShieldCheck, Heart } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import { SwapLogo } from '@/components/layout/SwapLogo';
 import { Badge } from '@/components/ui/badge';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where, limit } from 'firebase/firestore';
+import { collection, query, limit } from 'firebase/firestore';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function ExplorePage() {
   const firestore = useFirestore();
-  const featuredItems = ITEMS.slice(0, 4);
   const heroImage = PlaceHolderImages.find(img => img.id === 'item-camera');
   const ctaImage = PlaceHolderImages.find(img => img.id === 'community-collaboration');
 
-  const recentSwapsQuery = useMemoFirebase(() => {
+  const featuredItemsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(
-      collection(firestore, 'swapProposals'),
-      where('status', '==', 'Accepted'),
-      limit(1)
-    );
+    return query(collection(firestore, 'items'), limit(4));
   }, [firestore]);
 
-  const { data: recentSwaps, isLoading: isSwapsLoading } = useCollection(recentSwapsQuery);
+  const { data: items, isLoading } = useCollection(featuredItemsQuery);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -99,11 +93,27 @@ export default function ExplorePage() {
             </Link>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredItems.map(item => (
-              <ItemCard key={item.id} item={item} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {(items || []).map(item => (
+                <ItemCard key={item.id} item={{
+                  ...item,
+                  imageUrl: item.imageUrls?.[0] || `https://picsum.photos/seed/${item.id}/600/400`,
+                  ownerName: 'Community Member',
+                  createdAt: item.listedDate
+                }} />
+              ))}
+              {!isLoading && (!items || items.length === 0) && (
+                <div className="col-span-full py-12 text-center text-muted-foreground border-2 border-dashed rounded-3xl">
+                  No items listed yet. Be the first to share!
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
