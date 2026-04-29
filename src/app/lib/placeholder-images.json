@@ -3,69 +3,69 @@
   "placeholderImages": [
     {
       "id": "hero-camera",
-      "description": "Vintage film camera",
-      "imageUrl": "https://i.etsystatic.com/5356285/r/il/7ee563/3064919200/il_570xN.3064919200_ja9j.jpg",
-      "imageHint": "vintage camera"
+      "description": "Professional high-end camera",
+      "imageUrl": "https://picsum.photos/seed/pro-cam/1200/800",
+      "imageHint": "professional camera"
     },
     {
       "id": "barter-small",
-      "description": "A focused shot of two people exchanging items during a swap",
-      "imageUrl": "https://picsum.photos/seed/barter-small/600/400",
-      "imageHint": "barter exchange"
+      "description": "Clean minimal exchange of items",
+      "imageUrl": "https://picsum.photos/seed/minimal-swap/600/400",
+      "imageHint": "minimal exchange"
     },
     {
       "id": "item-camera",
-      "description": "Vintage film camera",
-      "imageUrl": "https://i.etsystatic.com/5356285/r/il/7ee563/3064919200/il_570xN.3064919200_ja9j.jpg",
-      "imageHint": "vintage camera"
+      "description": "Sleek professional DSLR camera",
+      "imageUrl": "https://picsum.photos/seed/tech-camera/1200/800",
+      "imageHint": "tech camera"
     },
     {
       "id": "item-dress",
-      "description": "Bodycon dress in good condition",
-      "imageUrl": "https://i.etsystatic.com/51992943/r/il/1c0745/7795964576/il_fullxfull.7795964576_ssoa.jpg",
-      "imageHint": "Bodycon Dress"
+      "description": "High-quality designer dress",
+      "imageUrl": "https://picsum.photos/seed/fashion-dress/800/1200",
+      "imageHint": "designer dress"
     },
     {
       "id": "item-headphones",
-      "description": "Premium wireless headphones",
-      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiFB5SK6aCr-HuA3uEnu5aVGZ4ts2bgM6fCQ&s",
-      "imageHint": "wireless headphones"
+      "description": "Studio quality wireless headphones",
+      "imageUrl": "https://picsum.photos/seed/studio-audio/800/800",
+      "imageHint": "studio headphones"
     },
     {
       "id": "item-pot",
-      "description": "Gaint flower pot",
-      "imageUrl": "https://5.imimg.com/data5/SELLER/Default/2024/8/444306354/OJ/IL/BT/108048478/decorative-flowerpot-stylish-pots-and-planters-for-garden-with-unique-design-500x500.png",
-      "imageHint": "Flower Pot"
+      "description": "Minimalist ceramic planter",
+      "imageUrl": "https://picsum.photos/seed/decor-pot/800/800",
+      "imageHint": "minimalist planter"
     },
     {
       "id": "item-watch",
-      "description": "Classic analog watch",
-      "imageUrl": "https://5.imimg.com/data5/ANDROID/Default/2024/7/438401486/OF/VC/XR/209351999/prod-20240727-2334002539037755841796415-jpg-500x500.jpg",
-      "imageHint": "classic watch"
+      "description": "Luxury minimalist timepiece",
+      "imageUrl": "https://picsum.photos/seed/luxury-watch/800/800",
+      "imageHint": "luxury watch"
     },
     {
       "id": "item-speaker",
-      "description": "Bluetooth portable speaker",
-      "imageUrl": "https://picsum.photos/seed/swap6/600/400",
-      "imageHint": "portable speaker"
+      "description": "Modern smart home speaker",
+      "imageUrl": "https://picsum.photos/seed/smart-audio/600/400",
+      "imageHint": "smart speaker"
     },
     {
       "id": "barter-hero",
-      "description": "Illustration of people bartering and swapping items",
-      "imageUrl": "https://picsum.photos/seed/barter-trading/1200/800",
-      "imageHint": "barter trade"
+      "description": "Clean, bright community trading scene",
+      "imageUrl": "https://picsum.photos/seed/community-hero/1200/800",
+      "imageHint": "community trade"
     },
     {
       "id": "sustainable-living",
-      "description": "People living sustainably in a community",
-      "imageUrl": "https://picsum.photos/seed/cta/800/600",
-      "imageHint": "sustainable living"
+      "description": "Modern eco-friendly lifestyle",
+      "imageUrl": "https://picsum.photos/seed/eco-lifestyle/800/600",
+      "imageHint": "eco lifestyle"
     },
     {
       "id": "community-collaboration",
-      "description": "Community members collaborating on a project",
-      "imageUrl": "https://picsum.photos/seed/about-mission/800/800",
-      "imageHint": "community collaboration"
+      "description": "Professional collaborative workspace",
+      "imageUrl": "https://picsum.photos/seed/pro-collab/800/800",
+      "imageHint": "professional collaboration"
     }
   ]
 }
