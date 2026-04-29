@@ -17,6 +17,7 @@ import { Search, Loader2 } from 'lucide-react';
 import { useFirestore, useCollection, useMemoFirebase, useUser } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
+import { ITEMS } from '@/lib/mock-data';
 
 export default function BrowsePage() {
   const { user, isUserLoading } = useUser();
@@ -37,9 +38,14 @@ export default function BrowsePage() {
     return collection(firestore, 'items');
   }, [firestore]);
 
-  const { data: items, isLoading } = useCollection(itemsQuery);
+  const { data: firestoreItems, isLoading } = useCollection(itemsQuery);
 
-  const filteredItems = (items || []).filter(item => {
+  // Combine real items with mock items as fallback, ensuring current user's items are always hidden
+  const allAvailableItems = firestoreItems && firestoreItems.length > 0 
+    ? firestoreItems 
+    : ITEMS;
+
+  const filteredItems = allAvailableItems.filter(item => {
     // Hide current user's items from their own browse feed
     if (user && item.ownerId === user.uid) return false;
 
@@ -119,9 +125,9 @@ export default function BrowsePage() {
               {filteredItems.map(item => (
                 <ItemCard key={item.id} item={{
                   ...item,
-                  imageUrl: item.imageUrls?.[0] || `https://picsum.photos/seed/${item.id}/600/400`,
-                  ownerName: 'Community Member',
-                  createdAt: item.listedDate
+                  imageUrl: item.imageUrls?.[0] || item.imageUrl || `https://picsum.photos/seed/${item.id}/600/400`,
+                  ownerName: item.ownerName || 'Community Member',
+                  createdAt: item.listedDate || item.createdAt
                 }} />
               ))}
             </div>

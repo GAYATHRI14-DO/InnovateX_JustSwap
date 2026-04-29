@@ -14,6 +14,7 @@ import { collection, query, limit } from 'firebase/firestore';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { ITEMS } from '@/lib/mock-data';
 
 export default function ExplorePage() {
   const { user, isUserLoading } = useUser();
@@ -33,9 +34,13 @@ export default function ExplorePage() {
     return query(collection(firestore, 'items'), limit(12));
   }, [firestore]);
 
-  const { data: items, isLoading } = useCollection(featuredItemsQuery);
+  const { data: firestoreItems, isLoading } = useCollection(featuredItemsQuery);
 
-  const displayedItems = (items || []).filter(item => item.ownerId !== user?.uid).slice(0, 4);
+  // Filter out current user's items and prioritize Firestore data, fallback to mock data if empty
+  const communityItems = (firestoreItems || []).filter(item => item.ownerId !== user?.uid);
+  const displayedItems = communityItems.length > 0 
+    ? communityItems.slice(0, 8) 
+    : ITEMS.filter(item => item.ownerId !== user?.uid).slice(0, 4);
 
   if (isUserLoading || !user) {
     return (
@@ -122,14 +127,14 @@ export default function ExplorePage() {
               {displayedItems.map(item => (
                 <ItemCard key={item.id} item={{
                   ...item,
-                  imageUrl: item.imageUrls?.[0] || `https://picsum.photos/seed/${item.id}/600/400`,
-                  ownerName: 'Community Member',
-                  createdAt: item.listedDate
+                  imageUrl: item.imageUrls?.[0] || item.imageUrl || `https://picsum.photos/seed/${item.id}/600/400`,
+                  ownerName: item.ownerName || 'Community Member',
+                  createdAt: item.listedDate || item.createdAt
                 }} />
               ))}
               {!isLoading && displayedItems.length === 0 && (
                 <div className="col-span-full py-12 text-center text-muted-foreground border-2 border-dashed rounded-3xl">
-                  {user ? "No new items found. Your own items are listed in your dashboard." : "No items listed yet. Be the first to share!"}
+                  {user ? "No new items found. Check back later for new community listings." : "No items listed yet. Be the first to share!"}
                 </div>
               )}
             </div>
