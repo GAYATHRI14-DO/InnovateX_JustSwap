@@ -16,7 +16,8 @@ import {
   ChevronRight, 
   Clock, 
   Loader2,
-  Inbox
+  Inbox,
+  LogIn
 } from 'lucide-react';
 import Link from 'next/link';
 import { useUser, useFirestore, useDoc, useMemoFirebase, useCollection, updateDocumentNonBlocking } from '@/firebase';
@@ -102,8 +103,8 @@ export default function DashboardPage() {
     );
   }
 
-  const displayName = profile?.firstName ? `${profile.firstName} ${profile.lastName}` : (user?.displayName || 'User');
-  const userEmail = user?.email || 'No email';
+  const displayName = profile?.firstName ? `${profile.firstName} ${profile.lastName}` : (user?.displayName || (user.isAnonymous ? 'Guest User' : 'User'));
+  const userEmail = user?.email || (user.isAnonymous ? 'Guest Mode' : 'No email');
   const userAvatar = user?.photoURL || `https://picsum.photos/seed/${user?.uid}/200/200`;
 
   const pendingIncoming = incomingProposals?.filter(p => p.status === 'Pending') || [];
@@ -125,6 +126,11 @@ export default function DashboardPage() {
                 <div>
                   <h2 className="text-2xl font-headline font-bold">{displayName}</h2>
                   <p className="text-sm text-muted-foreground">{userEmail}</p>
+                  {user.isAnonymous && (
+                    <Badge variant="outline" className="mt-2 bg-yellow-50 text-yellow-700 border-yellow-200">
+                      Guest Account
+                    </Badge>
+                  )}
                 </div>
                 <div className="pt-4 space-y-2">
                   <Link href="/profile/edit" className="block w-full">
@@ -133,14 +139,25 @@ export default function DashboardPage() {
                       Edit Profile
                     </Button>
                   </Link>
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start gap-2 rounded-xl text-destructive hover:bg-destructive/5 hover:text-destructive"
-                    onClick={handleSignOut}
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Sign Out
-                  </Button>
+                  {user.isAnonymous ? (
+                    <Link href="/login" className="block w-full">
+                      <Button 
+                        className="w-full justify-start gap-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
+                        <LogIn className="h-4 w-4" />
+                        Sign In Now
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start gap-2 rounded-xl text-destructive hover:bg-destructive/5 hover:text-destructive"
+                      onClick={handleSignOut}
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
