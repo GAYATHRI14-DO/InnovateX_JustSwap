@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,7 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { Camera, ChevronLeft, X, MapPin } from 'lucide-react';
+import { Camera, ChevronLeft, X, MapPin, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
@@ -36,8 +36,14 @@ export default function ListItemPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { toast } = useToast();
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
   const db = useFirestore();
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push("/login");
+    }
+  }, [user, isUserLoading, router]);
 
   const handleListingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +53,16 @@ export default function ListItemPage() {
         description: "Please sign in to list an item.",
         variant: "destructive",
       });
+      return;
+    }
+
+    if (user.isAnonymous) {
+      toast({
+        title: "Full Account Required",
+        description: "Guest users cannot list items. Please sign up to start swapping!",
+        variant: "destructive",
+      });
+      router.push('/signup');
       return;
     }
 
@@ -125,6 +141,14 @@ export default function ListItemPage() {
     fileInputRef.current?.click();
   };
 
+  if (isUserLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
@@ -139,6 +163,11 @@ export default function ListItemPage() {
             <div className="space-y-2">
               <h1 className="text-4xl font-headline font-bold">List an Item</h1>
               <p className="text-muted-foreground">Share what you have and let the community know what you need in return.</p>
+              {user?.isAnonymous && (
+                <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-xl text-yellow-800 text-sm">
+                  <strong>Note:</strong> You are currently browsing as a guest. You will need to <Link href="/signup" className="font-bold underline">sign up</Link> to publish this listing.
+                </div>
+              )}
             </div>
 
             <Card className="rounded-2xl border-2 shadow-sm">
@@ -257,7 +286,7 @@ export default function ListItemPage() {
                     className="w-full h-14 text-lg font-bold rounded-2xl bg-primary hover:bg-primary/90"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Listing Item..." : "Publish Listing"}
+                    {isSubmitting ? "Listing Item..." : (user?.isAnonymous ? "Sign Up to Publish" : "Publish Listing")}
                   </Button>
                 </form>
               </CardContent>

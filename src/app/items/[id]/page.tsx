@@ -63,6 +63,16 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
   }
 
   const handleProposeSwap = () => {
+    if (user?.isAnonymous) {
+      toast({
+        title: "Full Account Required",
+        description: "Guest users cannot propose swaps. Please sign up to start bartering!",
+        variant: "destructive"
+      });
+      router.push('/signup');
+      return;
+    }
+
     if (selectedOfferItems.length === 0) {
       toast({
         title: "No items selected",
@@ -181,68 +191,84 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
             </Card>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="flex-1 h-14 rounded-2xl bg-primary hover:bg-primary/90 text-lg font-bold gap-2">
-                    <RefreshCw className="h-5 w-5" />
-                    Propose a Swap
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-xl rounded-3xl">
-                  <DialogHeader>
-                    <DialogTitle className="text-2xl font-headline font-bold">What would you like to offer?</DialogTitle>
-                    <DialogDescription className="text-base">
-                      Select items from your collection to exchange for the <strong>{item.title}</strong>.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="py-6 space-y-4">
-                    <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Your Listings</p>
-                    <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto pr-2">
-                      {MY_ITEMS.map(myItem => (
-                        <div 
-                          key={myItem.id}
-                          className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
-                            selectedOfferItems.includes(myItem.id) 
-                            ? 'border-primary bg-primary/5' 
-                            : 'border-border hover:border-primary/50'
-                          }`}
-                          onClick={() => toggleItemSelection(myItem.id)}
-                        >
-                          <Checkbox 
-                            checked={selectedOfferItems.includes(myItem.id)}
-                            onCheckedChange={() => toggleItemSelection(myItem.id)}
-                            className="h-5 w-5 rounded-md"
-                          />
-                          <div className="relative h-12 w-12 rounded-lg overflow-hidden flex-shrink-0">
-                            <Image src={myItem.imageUrl} alt={myItem.title} fill className="object-cover" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-bold truncate">{myItem.title}</p>
-                            <p className="text-xs text-muted-foreground">{myItem.category} • {myItem.condition}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <Link href="/list-item" className="block">
-                      <Button variant="outline" className="w-full border-dashed rounded-xl py-8">
-                        + List a new item to offer
-                      </Button>
-                    </Link>
-                  </div>
-                  <DialogFooter className="sm:justify-between items-center border-t pt-6">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      {selectedOfferItems.length} item(s) selected
-                    </p>
-                    <Button 
-                      onClick={handleProposeSwap} 
-                      disabled={isSubmitting || selectedOfferItems.length === 0}
-                      className="rounded-xl px-8 h-12 bg-primary font-bold"
-                    >
-                      {isSubmitting ? "Sending..." : "Send Proposal"}
+              {user?.isAnonymous ? (
+                <Button 
+                  onClick={() => {
+                    toast({
+                      title: "Sign Up Required",
+                      description: "Guest users cannot propose swaps. Join our community to start bartering!",
+                    });
+                    router.push('/signup');
+                  }}
+                  className="flex-1 h-14 rounded-2xl bg-primary hover:bg-primary/90 text-lg font-bold gap-2"
+                >
+                  <RefreshCw className="h-5 w-5" />
+                  Sign Up to Swap
+                </Button>
+              ) : (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="flex-1 h-14 rounded-2xl bg-primary hover:bg-primary/90 text-lg font-bold gap-2">
+                      <RefreshCw className="h-5 w-5" />
+                      Propose a Swap
                     </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-xl rounded-3xl">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl font-headline font-bold">What would you like to offer?</DialogTitle>
+                      <DialogDescription className="text-base">
+                        Select items from your collection to exchange for the <strong>{item.title}</strong>.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="py-6 space-y-4">
+                      <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Your Listings</p>
+                      <div className="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto pr-2">
+                        {MY_ITEMS.map(myItem => (
+                          <div 
+                            key={myItem.id}
+                            className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                              selectedOfferItems.includes(myItem.id) 
+                              ? 'border-primary bg-primary/5' 
+                              : 'border-border hover:border-primary/50'
+                            }`}
+                            onClick={() => toggleItemSelection(myItem.id)}
+                          >
+                            <Checkbox 
+                              checked={selectedOfferItems.includes(myItem.id)}
+                              onCheckedChange={() => toggleItemSelection(myItem.id)}
+                              className="h-5 w-5 rounded-md"
+                            />
+                            <div className="relative h-12 w-12 rounded-lg overflow-hidden flex-shrink-0">
+                              <Image src={myItem.imageUrl} alt={myItem.title} fill className="object-cover" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-bold truncate">{myItem.title}</p>
+                              <p className="text-xs text-muted-foreground">{myItem.category} • {myItem.condition}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <Link href="/list-item" className="block">
+                        <Button variant="outline" className="w-full border-dashed rounded-xl py-8">
+                          + List a new item to offer
+                        </Button>
+                      </Link>
+                    </div>
+                    <DialogFooter className="sm:justify-between items-center border-t pt-6">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {selectedOfferItems.length} item(s) selected
+                      </p>
+                      <Button 
+                        onClick={handleProposeSwap} 
+                        disabled={isSubmitting || selectedOfferItems.length === 0}
+                        className="rounded-xl px-8 h-12 bg-primary font-bold"
+                      >
+                        {isSubmitting ? "Sending..." : "Send Proposal"}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              )}
 
               <Button variant="outline" className="h-14 px-6 rounded-2xl border-2 hover:bg-red-50 hover:text-red-500 hover:border-red-200">
                 <Heart className="h-6 w-6" />
