@@ -7,7 +7,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { SwapLogo } from '@/components/layout/SwapLogo';
-import { Badge } from '@/badge';
+import { Badge } from '@/components/ui/badge';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useEffect } from 'react';
@@ -47,7 +47,7 @@ export default function ExplorePage() {
   const firestoreList = firestoreItems || [];
   const combinedItems = [...firestoreList, ...ITEMS];
   const uniqueItems = Array.from(new Map(combinedItems.map(item => [item.id, item])).values());
-  // Changed slice from 0, 4 to 0, 2 to show only two featured items
+  // Show only two featured items for a cleaner landing page
   const featuredItems = uniqueItems.filter(item => user && item.ownerId !== user.uid).slice(0, 2);
 
   return (
