@@ -65,7 +65,7 @@ export default function ExplorePage() {
                 Bartering Reimagined
               </Badge>
               <h1 className="text-5xl lg:text-7xl font-script font-bold leading-[1.1] text-foreground">
-                Get what you NEED without money.
+                Get what you <span className="font-merriweather italic px-1">NEED</span> without money.
               </h1>
               <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
                 Exchange items with your neighbors. justSwap helps you find new homes for your belongings while getting the things you want, sustainably.
