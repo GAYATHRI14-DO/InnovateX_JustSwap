@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Navbar } from '@/components/layout/Navbar';
 import { ItemCard } from '@/components/items/ItemCard';
 import { Input } from '@/components/ui/input';
@@ -16,21 +16,13 @@ import {
 import { Search, Loader2 } from 'lucide-react';
 import { useFirestore, useCollection, useMemoFirebase, useUser } from '@/firebase';
 import { collection } from 'firebase/firestore';
-import { useRouter } from 'next/navigation';
 import { ITEMS } from '@/lib/mock-data';
 
 export default function BrowsePage() {
-  const { user, isUserLoading } = useUser();
-  const router = useRouter();
+  const { user } = useUser();
   const [searchQuery, setSearchQuery] = useState('');
   const [category, setCategory] = useState('all');
   const [condition, setCondition] = useState('all');
-
-  useEffect(() => {
-    if (!isUserLoading && !user) {
-      router.push("/login");
-    }
-  }, [user, isUserLoading, router]);
 
   const firestore = useFirestore();
   const itemsQuery = useMemoFirebase(() => {
@@ -39,17 +31,6 @@ export default function BrowsePage() {
   }, [firestore]);
 
   const { data: firestoreItems, isLoading } = useCollection(itemsQuery);
-
-  if (isUserLoading || !user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-black" />
-          <p className="text-sm font-medium animate-pulse text-muted-foreground">Verifying access...</p>
-        </div>
-      </div>
-    );
-  }
 
   // Merge real items with community items for a populated feel
   const firestoreList = firestoreItems || [];
