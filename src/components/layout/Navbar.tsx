@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -119,10 +120,10 @@ export function Navbar() {
           ) : (
             <div className="flex items-center gap-2">
               {!user ? (
-                <Link href="/">
+                <Link href="/login">
                   <Button className="gap-2 rounded-xl font-bold bg-black text-white hover:bg-black/90 shadow-md">
                     <UserPlus className="h-4 w-4" />
-                    Sign Up
+                    Sign In
                   </Button>
                 </Link>
               ) : (

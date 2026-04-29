@@ -15,7 +15,7 @@ export default function HomePage() {
       if (user) {
         router.push("/explore");
       } else {
-        router.push("/signup");
+        router.push("/login");
       }
     }
   }, [user, isUserLoading, router]);
