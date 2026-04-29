@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, PlusCircle, User, Bell, UserPlus, Loader2 } from 'lucide-react';
+import { Search, PlusCircle, Bell, UserPlus, Loader2 } from 'lucide-react';
 import { SwapLogo } from './SwapLogo';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -119,18 +119,11 @@ export function Navbar() {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              {!user ? (
+              {!user && (
                 <Link href="/login">
                   <Button className="gap-2 rounded-xl font-bold bg-black text-white hover:bg-black/90 shadow-md">
                     <UserPlus className="h-4 w-4" />
                     Sign In
-                  </Button>
-                </Link>
-              ) : (
-                <Link href="/dashboard">
-                  <Button className="gap-2 rounded-xl font-bold bg-black text-white hover:bg-black/90 shadow-md">
-                    <User className="h-4 w-4" />
-                    Dashboard
                   </Button>
                 </Link>
               )}
