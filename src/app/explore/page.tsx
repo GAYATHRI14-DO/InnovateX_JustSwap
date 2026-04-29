@@ -103,19 +103,13 @@ export default function ExplorePage() {
       {/* Featured Items Section */}
       <section className="py-24 bg-white">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+          <div className="mb-16">
             <div className="space-y-4">
               <h2 className="text-4xl font-headline font-bold">Featured Items</h2>
               <p className="text-muted-foreground text-lg max-w-xl">
                 Discover items available in your community right now. From electronics to books, everything is up for trade.
               </p>
             </div>
-            <Link href="/browse">
-              <Button variant="ghost" className="font-bold gap-2 text-primary hover:bg-primary/5">
-                View all items
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 max-w-4xl">
@@ -127,6 +121,15 @@ export default function ExplorePage() {
                 createdAt: item.listedDate || item.createdAt
               }} />
             ))}
+          </div>
+
+          <div className="mt-12">
+            <Link href="/browse">
+              <Button variant="ghost" className="font-bold gap-2 text-primary hover:bg-primary/5 p-0">
+                View all items
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
